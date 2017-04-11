@@ -23,7 +23,6 @@ import service.exception.MontantSuperieurAuSoldeException;
 public interface IDao {
 
 	public boolean authentificationConseiller(String login, String pwd);
-	
 	public int compterNombreClient(Conseiller co);
 	
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients;

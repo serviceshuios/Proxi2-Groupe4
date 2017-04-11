@@ -4,10 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import metier.CarteBancaire;
-import metier.CarteVisa;
 import metier.Compte;
 import service.IConseiller;
-import service.ServiceConseiller;
 import service.Services;
 
 public class ServiceConseillerCarteVisaTest {

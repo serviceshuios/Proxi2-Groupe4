@@ -46,44 +46,75 @@ public class GestionConseiller extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-		// controle authentification
+		// contrôle authentification par session
+		
 		HttpSession session = request.getSession(false);
-		// si pas de session on en initialise une
+		// si pas de session, on en initialise une toute neuve avc deux attributs
 		if (session == null || session.getAttribute("login") == null || session.getAttribute("attemptsCount") == null) {
 			session = request.getSession();
 			session.setAttribute("login", "visiteur");
 			session.setAttribute("attemptsCount", 0);
 		} else {
-			// si déjà une, on augmente le compteur de fail
-			int i = ((int) session.getAttribute("attemptsCount")) + 1;
-			session.setAttribute("attemptsCount", i);
+			// si déjà une session, on augmente le compteur de fail (si appui sur bouton valider de authenticate.jsp)
+			if (request.getParameter("validauthenticate")!=null) {
+				int i = ((int) session.getAttribute("attemptsCount")) + 1;
+				session.setAttribute("attemptsCount", i);
+			}
 		}
-		// si session pas conseiller, on verifie le login
+
+		// si session n'est pas un conseiller, on verifie s'il y a un login
 		if (!session.getAttribute("login").equals("Conseiller")) {
-			String id = request.getParameter("id");
-			String pwd = request.getParameter("pwd");
-			IConseiller ic = new Services();
-			if (ic.authentificationConseiller(id, pwd) == true) {
-				session.setAttribute("login", "Conseiller");
-				session.setAttribute("attemptsCount", 0);
+			if (request.getParameter("id") != null && request.getParameter("pwd") != null) {
+				String id = request.getParameter("id");
+				String pwd = request.getParameter("pwd");
+				// IConseiller ic = new Services();
+				// if (ic.authentificationConseiller(id, pwd) == true) {
+				// if ci-dessous à remplacer par le if ci-dessus
+				if (id.equals("bourne") && pwd.equals("bourne")) {
+					session.setAttribute("login", "Conseiller");
+					session.setAttribute("attemptsCount", 0);
+				} else {
+					request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
+				}
 			} else {
 				request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 			}
 		}
+		// fin contrôle authentification
 
+		// déconnection
 		if (request.getParameter("action").equals("Deconnection")) {
-			session.setAttribute("login", "visiteur");
-			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+			session.invalidate();
+			request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 		}
 		
-		if (request.getParameter("action").equals("interfaceConseiller")) {
+		// Ajouter un client
+		if (request.getParameter("action").equals("AjouterClient")) {
 			IConseiller ic = new Services();
-			
+
+			// ic.ajouterClient(co, c);
+
 			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 		}
 		
-		
-		
+		// Modifier un client
+		if (request.getParameter("action").equals("ModifierClient")) {
+			IConseiller ic = new Services();
+
+			//ic.modifierClient(c, nom, prenom, a, email);;
+
+			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+		}
+
+		// Effectuer un virement
+		if (request.getParameter("action").equals("EffectuerVirement")) {
+			IConseiller ic = new Services();
+
+			// ic.effectuerVirement(montant, c1, c2);
+
+			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+		}
+
 		/*
 		 * if (request.getParameter("action").equals("ajouter")) { // 1 -
 		 * récupérer paramètres (du formulaire) String nom =

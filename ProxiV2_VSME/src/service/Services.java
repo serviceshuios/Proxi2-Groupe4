@@ -36,7 +36,7 @@ public class Services implements IConseiller, IGerant {
 	 */
 		@Override
 		public void ajouterConseiller(Gerant g, Conseiller co) {
-			idaogerant.AjouterConseiller(g, co);
+			idaogerant.ajouterConseiller(g, co);
 			
 			/*Collection<Conseiller> col = g.getConseillers(); // Récupère la liste des conseillers du gérant
 			col.add(co); //Ajoute le Conseiller co à la liste col
@@ -52,7 +52,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void modifierConseiller(Conseiller c, Adresse a, String telephone) {
 			
-			idaogerant.ModifierConseiller(c, a, telephone);
+			idaogerant.modifierConseiller(c, a, telephone);
 			/*c.setSonAdresse(a);
 			c.setTelephone(telephone);
 			*/
@@ -78,7 +78,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void afficherConseiller(Conseiller c) {
-			idaogerant.AfficherConseiller(c);
+			idaogerant.afficherConseiller(c);
 		}
 	
 	
@@ -155,7 +155,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
 	
-		idaoconseiller.AjouterClient(co, c);
+		idaoconseiller.ajouterClient(co, c);
 		
 		/*if(co.getClients().size()<10)
 				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
@@ -212,7 +212,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void ajouterCompteClient(Client c, Compte co) throws CompteEpargneExistantException, CompteCourantExistantException {
 			
-			idaoconseiller.AjouterCompteClient(c, co);
+			idaoconseiller.ajouterCompteClient(c, co);
 			
 			/*
 			IConseiller cs = new Services();
@@ -264,8 +264,8 @@ public class Services implements IConseiller, IGerant {
 		}
 
 		@Override
-		public void modifierClient(Client c, Adresse a, String telephone) {
-				idaoconseiller.ModifierClient(c, a, telephone);	
+		public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) {
+				idaoconseiller.modifierClient(c, nom, prenom,a,email);	
 			/*
 			 * c.setTelephone(telephone);
 			 * c.setSonAdresse(a);
@@ -289,7 +289,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void supprimerClient(Client c, Conseiller co) {
-			idaoconseiller.SupprimerClient(c, co);
+			idaoconseiller.supprimerClient(c, co);
 			/*
 			Collection<Client> col = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection col
 			col.remove(c);	//Suppression du client de la collection
@@ -308,7 +308,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void supprimerCompteClient(Compte co, Client c) throws AbsenceDeCompteEpargneException, AbsenceDeCompteCourantException {
-			idaoconseiller.SupprimerCompteClient(co, c);
+			idaoconseiller.supprimerCompteClient(co, c);
 			
 			/*
 			if(co instanceof CompteEpargne){ //Test si le compte à supprimer est un Compte Epargne
@@ -360,11 +360,17 @@ public class Services implements IConseiller, IGerant {
 		 * Affichage d'un compte client
 		 */
 			@Override
-			public void afficherCompteClient(Compte compte) {
-				idaoconseiller.AfficherCompteClient(compte);
+			public Collection<Compte> listerCompteClient (Client c) {
+				return idaoconseiller.listerCompteClient (c);
 			}
 
 	
+			@Override
+			public Collection<Client> listerClient(String motcle){
+				return idaoconseiller.listerClient(motcle);
+				
+			}
+			
 	/**
 	 * Virement d'un montant d'un compte A à un compte B 
 	 * @throws MontantSuperieurAuSoldeException 
@@ -374,7 +380,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public void effectuerVirement(int montant,Compte c1, Compte c2) throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
 		
-		idaoconseiller.EffectuerVirement(montant, c1, c2);
+		idaoconseiller.effectuerVirement(montant, c1, c2);
 		
 		
 		/*
@@ -423,7 +429,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public double effectuerSimulationCredit(double montant, int taux, int duree) throws MontantNegatifException {
 			
-			return idaoconseiller.EffectuerSimulationCredit(montant, taux, duree);
+			return idaoconseiller.effectuerSimulationCredit(montant, taux, duree);
 			/*
 			double montantARembourserParMois;
 			if (montant<=0) //Test si le montant entré est inférieur à 0
@@ -537,7 +543,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void activationCarteVisa(Compte c, CarteBancaire cv) {
 			
-			idaoconseiller.ActivationCarteVisa(c, cv);
+			idaoconseiller.activationCarteVisa(c, cv);
 			/*
 				c.setCarteBancaire(cv);
 				System.out.println("La carte " + cv +" a été activée pour le compte " + c);
@@ -550,7 +556,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void desactivationCarteVisa(Compte c, CarteBancaire cv) {
-			idaoconseiller.DesactivationCarteVisa(c, cv);
+			idaoconseiller.desactivationCarteVisa(c, cv);
 			
 			/*
 				c.setCarteBancaire(null);

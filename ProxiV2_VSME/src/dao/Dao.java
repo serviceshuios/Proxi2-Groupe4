@@ -63,7 +63,7 @@ public class Dao implements IDao {
 		Collection<Client> cl = new ArrayList<Client>();
 		try {
 			Connection conn= DaoConnection.getConnection();
-			PreparedStatement ps = conn.prepareStatement("SELECT idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse, conseiller WHERE conseiller.idConseiller=client.idConseiller AND adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient and conseiller.idConseiller=? ");
+			PreparedStatement ps = conn.prepareStatement("SELECT client.idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse, conseiller WHERE conseiller.idConseiller=client.idConseiller AND adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient and conseiller.idConseiller=? ");
 			ps.setInt(1, co.getIdConseiller());
 			ResultSet rs = ps.executeQuery();
 			
@@ -151,9 +151,8 @@ public class Dao implements IDao {
 		Collection<Client> cl = new ArrayList<Client>();
 		try {
 			Connection conn= DaoConnection.getConnection();
-			String s = "SELECT idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse WHERE adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient AND personne.nom = ? ";
+			String s = "SELECT client.idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse WHERE adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient AND UPPER(personne.nom) LIKE UPPER('%" + motcle+ "%') ";
 			PreparedStatement ps = conn.prepareStatement(s);
-			ps.setString(1, motcle);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next())

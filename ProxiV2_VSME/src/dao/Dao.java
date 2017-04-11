@@ -38,9 +38,13 @@ public class Dao implements IDao {
 			ResultSet rs = ps.executeQuery();
 		
 		
-		if (rs.getString("pwd")==pwd)
+		if (rs.next())
 		{
+			String password = rs.getString("pwd");
+			if(password.equals(pwd))
+			{
 			b=true;
+			}
 		}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

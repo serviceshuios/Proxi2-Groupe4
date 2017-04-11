@@ -278,8 +278,8 @@ public class Services implements IConseiller, IGerant {
 	 */
 
 		@Override
-		public void afficherClient(Client c) {
-		idaoconseiller.AfficherClient(c);
+		public Collection<Client> listerClient(Conseiller co) {
+		return idaoconseiller.listerClient(co);
 		}
 	
 	

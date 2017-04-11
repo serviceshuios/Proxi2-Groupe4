@@ -1,5 +1,7 @@
 package service;
 
+import java.util.Collection;
+
 import metier.Adresse;
 import metier.CarteBancaire;
 import metier.Client;
@@ -28,9 +30,10 @@ public interface IConseiller {
 	
 	
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients;
-	public void modifierClient(Client c, Adresse a, String telephone);
+	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email);
 	public void supprimerClient(Client c, Conseiller co);
-	public void afficherClient(Client c);
+	public Collection<Client> listerClient(Conseiller co);
+	public Collection<Client> listerClient(String motcle);
 	
 	public void activationCarteVisa(Compte c, CarteBancaire cv);
 	public void desactivationCarteVisa(Compte c, CarteBancaire cv);
@@ -39,7 +42,7 @@ public interface IConseiller {
 	
 	public void ajouterCompteClient (Client c, Compte co) throws CompteEpargneExistantException, CompteCourantExistantException;
 	public void supprimerCompteClient (Compte compte, Client c) throws AbsenceDeCompteEpargneException, AbsenceDeCompteCourantException;
-	public void afficherCompteClient (Compte compte);
+	public Collection<Compte> listerCompteClient (Client c);
 	
 	
 	public Placement creerPlacement(String typePlacement);

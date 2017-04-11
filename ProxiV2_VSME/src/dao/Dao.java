@@ -3,6 +3,7 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -90,20 +91,45 @@ public class Dao implements IDao {
 		
 	}
 	
+	public int recuperationidAdresse(Client c) throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT idadresse FROM personne WHERE idClient = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, c.getIdClient());
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idadresse");
+				return id;
+		}
+		return id;
+	}
+	
 	
 	@Override
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) {
 		try {
+			Dao dao = new Dao();
+			
 			Connection conn= DaoConnection.getConnection();
-			String s= "UPDATE personne, adresse SET personne.nom = ?, personne.prenom = ? , personne.email = ? , adresse.adresse = ? ,adresse.codePostale = ? , adresse.ville = ?  WHERE personne.idClient = ? AND personne.adAdresse=adresse.idAdresse";
+			String s= "UPDATE personne SET nom = ?, prenom = ? , email = ?  WHERE personne.idClient = ? ";
 			PreparedStatement ps = conn.prepareStatement(s);
 			ps.setString(1, nom);
 			ps.setString(2, prenom);
 			ps.setString(3, email);
-			ps.setString(4, a.getAdresse());
-			ps.setInt(5, a.getCodePostale());
-			ps.setString(6, a.getVille());
-			ps.setInt(7, c.getIdClient());
+			ps.setInt(4, c.getIdClient());
+			ps.executeUpdate();
+			
+			int id = dao.recuperationidAdresse(c);
+			
+			String s2= "UPDATE adresse SET adresse = ? ,codePostale = ? , ville = ?  WHERE idAdresse = ?";
+			PreparedStatement ps2 = conn.prepareStatement(s2);
+			ps2.setString(1, a.getAdresse());
+			ps2.setInt(2, a.getCodePostale());
+			ps2.setString(3, a.getVille());
+			ps2.setInt(4, id);
+			ps2.executeUpdate();
 	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -177,21 +203,43 @@ public class Dao implements IDao {
 		return cl;
 	}
 	
+	public double recuperationSolde(Compte c1) throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		double solde1=0;
+			String selection = "SELECT solde FROM compte WHERE idCompte = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, c1.getIdCompte());
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				solde1 = rs1.getDouble("solde");
+				return solde1;
+		}
+		return solde1;
+	}
+	
 	
 	@Override
 	public void effectuerVirement(int montant, Compte c1, Compte c2)
 			throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
 				try {
 					Connection conn= DaoConnection.getConnection();
+					Dao dao = new Dao();
+					
+					double solde1= dao.recuperationSolde(c1);
+					double solde2=dao.recuperationSolde(c2);
+					
 					String s= "UPDATE compte SET solde = ? WHERE idCompte = ? ";
 					PreparedStatement ps = conn.prepareStatement(s);
-					ps.setDouble(1, (c1.getSolde()-montant));
+					ps.setDouble(1, (solde1-montant));
 					ps.setLong(2, c1.getIdCompte());
+					ps.executeUpdate();
 					
 					String s1= "UPDATE compte SET solde = ? WHERE idCompte = ? ";
 					PreparedStatement ps1 = conn.prepareStatement(s1);
-					ps1.setDouble(1, (c2.getSolde()+montant));
+					ps1.setDouble(1, (solde2+montant));
 					ps1.setLong(2, c2.getIdCompte());
+					ps1.executeUpdate();
 			
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

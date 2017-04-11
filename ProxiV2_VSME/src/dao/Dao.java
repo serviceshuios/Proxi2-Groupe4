@@ -23,7 +23,7 @@ import service.exception.LeConseillerADeja10Clients;
 import service.exception.MontantNegatifException;
 import service.exception.MontantSuperieurAuSoldeException;
 
-public class Dao implements IDaoConseiller, IDaoGerant {
+public class Dao implements IDao {
 	
 	
 	@Override
@@ -199,6 +199,15 @@ public class Dao implements IDaoConseiller, IDaoGerant {
 	}
 	
 	
+	@Override
+	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
+		try {
+			Connection conn= DaoConnection.getConnection();
+			String s= "INSERT INTO client(typeClient,idConseiller,)";
+		
+	}
+	
+	
 	
 	
 	
@@ -234,11 +243,7 @@ public class Dao implements IDaoConseiller, IDaoGerant {
 		
 	}
 
-	@Override
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	
 

@@ -3,8 +3,7 @@ package service;
 import java.util.Collection;
 
 import dao.Dao;
-import dao.IDaoConseiller;
-import dao.IDaoGerant;
+import dao.IDao;
 import metier.Adresse;
 import metier.Agence;
 import metier.CarteBancaire;
@@ -26,8 +25,8 @@ import service.exception.MontantSuperieurAuSoldeException;
 
 public class Services implements IConseiller, IGerant {
 
-	IDaoConseiller idaoconseiller = new Dao();
-	IDaoGerant idaogerant = new Dao();
+	IDao idao = new Dao();
+
 	
 	public Services() 
 		{
@@ -40,7 +39,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public boolean authentificationConseiller(String login, String pwd) 
 		{
-			return idaoconseiller.authentificationConseiller(login,pwd);
+			return idao.authentificationConseiller(login,pwd);
 		}
 	
 	
@@ -50,7 +49,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public Collection<Client> listerClient(Conseiller co) 
 		{
-			return idaoconseiller.listerClient(co);
+			return idao.listerClient(co);
 		}
 	
 	
@@ -60,7 +59,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) 
 		{
-			idaoconseiller.modifierClient(c, nom, prenom,a,email);	
+			idao.modifierClient(c, nom, prenom,a,email);	
 		}
 	
 	
@@ -70,7 +69,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public Collection<Compte> listerCompteClient (Client c) 
 		{
-			return idaoconseiller.listerCompteClient (c);
+			return idao.listerCompteClient (c);
 		}
 
 
@@ -81,7 +80,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public Collection<Client> listerClient(String motcle)
 		{
-			return idaoconseiller.listerClient(motcle);	
+			return idao.listerClient(motcle);	
 		}
 	
 	
@@ -105,7 +104,7 @@ public class Services implements IConseiller, IGerant {
 			{
 				if(montant<c1.getSolde()) // Test si le montant est inferieur au solde du compte
 				{
-					idaoconseiller.effectuerVirement(montant, c1, c2);
+					idao.effectuerVirement(montant, c1, c2);
 				}
 				else
 				{
@@ -118,7 +117,7 @@ public class Services implements IConseiller, IGerant {
 				{
 					if((c1.getSolde()-montant)>-1000) //Test si le solde du compte viré est au dessus du découvert autorisé
 					{
-						idaoconseiller.effectuerVirement(montant, c1, c2);
+						idao.effectuerVirement(montant, c1, c2);
 					}
 					else
 					{
@@ -131,6 +130,35 @@ public class Services implements IConseiller, IGerant {
 			
 	}
 
+	
+	@Override
+	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
+	
+		idao.ajouterClient(co, c);
+		
+		/*if(co.getClients().size()<10)
+				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
+			IConseiller cs = new Services();
+			c=cs.creerClient(c);
+			
+			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
+		
+				//Ajouter client particulier
+				Collection<Client> cl1 = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection cl1
+				cl1.add(c); //Ajout du client c à la collection cl1
+				co.setClients(cl1); //Association de la nouvelle collection cl1 au conseiller co
+				c.setConseiller(co); //Association du conseiller co au client c
+				
+			}
+			
+		
+		} else{
+			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");
+		}	
+	*/		
+	}
+	
+	
 	
 	
 	
@@ -147,7 +175,7 @@ public class Services implements IConseiller, IGerant {
 	@Override
 	public void ajouterConseiller(Gerant g, Conseiller co) 
 		{
-		idaogerant.ajouterConseiller(g, co);
+		idao.ajouterConseiller(g, co);
 			
 			/*Collection<Conseiller> col = g.getConseillers(); // Récupère la liste des conseillers du gérant
 			col.add(co); //Ajoute le Conseiller co à la liste col
@@ -163,7 +191,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void modifierConseiller(Conseiller c, Adresse a, String telephone) {
 			
-			idaogerant.modifierConseiller(c, a, telephone);
+			idao.modifierConseiller(c, a, telephone);
 			/*c.setSonAdresse(a);
 			c.setTelephone(telephone);
 			*/
@@ -189,13 +217,13 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void afficherConseiller(Conseiller c) {
-			idaogerant.afficherConseiller(c);
+			idao.afficherConseiller(c);
 		}
 	
 	
 		
 		public String effectuerAudit(Agence agence) {
-			return idaogerant.effectuerAudit(agence);
+			return idao.effectuerAudit(agence);
 			/*String res = "Audit de l'Agence " + agence.getIdAgence();
 		Iterator<Conseiller> itCons = agence.getGerant().getConseillers().iterator();
 		while (itCons.hasNext()) {
@@ -243,7 +271,7 @@ public class Services implements IConseiller, IGerant {
 
 		private Client creerClient(Client c) {
 
-			return idaoconseiller.creerClient(c);
+			return idao.creerClient(c);
 			/*
 			// pour choisir type de client
 
@@ -263,32 +291,6 @@ public class Services implements IConseiller, IGerant {
 			
 		
 		
-	@Override
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
-	
-		idaoconseiller.ajouterClient(co, c);
-		
-		/*if(co.getClients().size()<10)
-				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
-			IConseiller cs = new Services();
-			c=cs.creerClient(c);
-			
-			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
-		
-				//Ajouter client particulier
-				Collection<Client> cl1 = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection cl1
-				cl1.add(c); //Ajout du client c à la collection cl1
-				co.setClients(cl1); //Association de la nouvelle collection cl1 au conseiller co
-				c.setConseiller(co); //Association du conseiller co au client c
-				
-			}
-			
-		
-		} else{
-			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");
-		}	
-	*/		
-	}
 	
 	
 	/**
@@ -300,7 +302,7 @@ public class Services implements IConseiller, IGerant {
 	
 	private Compte creationCompte(Compte c) {
 
-		return idaoconseiller.creationCompte(c);
+		return idao.creationCompte(c);
 		// pour choisir type de client
 
 		/*
@@ -323,7 +325,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void ajouterCompteClient(Client c, Compte co) throws CompteEpargneExistantException, CompteCourantExistantException {
 			
-			idaoconseiller.ajouterCompteClient(c, co);
+			idao.ajouterCompteClient(c, co);
 			
 			/*
 			IConseiller cs = new Services();
@@ -383,7 +385,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void supprimerClient(Client c, Conseiller co) {
-			idaoconseiller.supprimerClient(c, co);
+			idao.supprimerClient(c, co);
 			/*
 			Collection<Client> col = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection col
 			col.remove(c);	//Suppression du client de la collection
@@ -402,7 +404,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void supprimerCompteClient(Compte co, Client c) throws AbsenceDeCompteEpargneException, AbsenceDeCompteCourantException {
-			idaoconseiller.supprimerCompteClient(co, c);
+			idao.supprimerCompteClient(co, c);
 			
 			/*
 			if(co instanceof CompteEpargne){ //Test si le compte à supprimer est un Compte Epargne
@@ -460,7 +462,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public double effectuerSimulationCredit(double montant, int taux, int duree) throws MontantNegatifException {
 			
-			return idaoconseiller.effectuerSimulationCredit(montant, taux, duree);
+			return idao.effectuerSimulationCredit(montant, taux, duree);
 			/*
 			double montantARembourserParMois;
 			if (montant<=0) //Test si le montant entré est inférieur à 0
@@ -489,7 +491,7 @@ public class Services implements IConseiller, IGerant {
 	 */
 	public Placement creerPlacement(String typePlacement) {
 
-		return idaoconseiller.creerPlacement(typePlacement);
+		return idao.creerPlacement(typePlacement);
 		/*
 		// calcul de la fortune client
 		Collection<Compte> col = patrimoine.getClient().getComptes();
@@ -542,7 +544,7 @@ public class Services implements IConseiller, IGerant {
 	 */
 	public void supprimerPlacement(Placement placement) {
 		
-		idaoconseiller.supprimerPlacement(placement);
+		idao.supprimerPlacement(placement);
 		
 		/*
 
@@ -574,7 +576,7 @@ public class Services implements IConseiller, IGerant {
 		@Override
 		public void activationCarteVisa(Compte c, CarteBancaire cv) {
 			
-			idaoconseiller.activationCarteVisa(c, cv);
+			idao.activationCarteVisa(c, cv);
 			/*
 				c.setCarteBancaire(cv);
 				System.out.println("La carte " + cv +" a été activée pour le compte " + c);
@@ -587,7 +589,7 @@ public class Services implements IConseiller, IGerant {
 
 		@Override
 		public void desactivationCarteVisa(Compte c, CarteBancaire cv) {
-			idaoconseiller.desactivationCarteVisa(c, cv);
+			idao.desactivationCarteVisa(c, cv);
 			
 			/*
 				c.setCarteBancaire(null);

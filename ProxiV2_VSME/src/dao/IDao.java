@@ -4,10 +4,12 @@ import java.sql.ResultSet;
 import java.util.Collection;
 
 import metier.Adresse;
+import metier.Agence;
 import metier.CarteBancaire;
 import metier.Client;
 import metier.Compte;
 import metier.Conseiller;
+import metier.Gerant;
 import metier.Placement;
 import service.exception.AbsenceDeCompteCourantException;
 import service.exception.AbsenceDeCompteEpargneException;
@@ -18,7 +20,7 @@ import service.exception.LeConseillerADeja10Clients;
 import service.exception.MontantNegatifException;
 import service.exception.MontantSuperieurAuSoldeException;
 
-public interface IDaoConseiller {
+public interface IDao {
 
 	public boolean authentificationConseiller(String login, String pwd);
 	
@@ -42,6 +44,13 @@ public interface IDaoConseiller {
 	public void supprimerPlacement(Placement placement);
 	void effectuerVirement(int montant,Compte c1, Compte c2 )throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise;
 	double effectuerSimulationCredit(double montant, int taux, int duree) throws MontantNegatifException;
+	
+	
+	public String effectuerAudit(Agence agence);
+	public void ajouterConseiller(Gerant g, Conseiller co);
+	public void supprimerConseiller(Conseiller c, Gerant g);
+	public void afficherConseiller(Conseiller c);
+	void modifierConseiller(Conseiller c, Adresse a, String telephone);
 	
 	
 }

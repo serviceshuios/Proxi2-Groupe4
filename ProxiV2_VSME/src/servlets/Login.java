@@ -29,13 +29,7 @@ public class Login extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String login =request.getParameter("login");
-		String pwd = request.getParameter("pwd");
-		
-		HttpSession session = request.getSession();
-		session.setAttribute("lelogin", login);
 	
-		request.getRequestDispatcher("/ajouter.jsp").forward(request, response);
 		
 	}
 
@@ -44,7 +38,23 @@ public class Login extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		String login = request.getParameter("login");
+		String pwd = request.getParameter("pwd");
+		
+		//création de session
+		HttpSession session = request.getSession();
+		
+		//création ou modification des attributs de session
+		session.setAttribute("lelogin", login);
+		
+		//accès aux attributs de session
+		session.getAttribute("lelogin");
+
+		//destruction de la session
+		session.invalidate();
+		
+		// traitement se terminant par
+		request.getRequestDispatcher("/resultatAjouterClient.jsp").forward(request, response);
 	}
 
 }

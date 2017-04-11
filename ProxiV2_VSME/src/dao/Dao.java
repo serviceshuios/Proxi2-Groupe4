@@ -32,7 +32,7 @@ public class Dao implements IDao {
 		boolean b = false;
 		try {
 		Connection conn= DaoConnection.getConnection();
-		PreparedStatement ps = conn.prepareStatement("SELECT pwd FROM connectionConseiller WHERE login = ?");
+		PreparedStatement ps = conn.prepareStatement("SELECT pwd FROM connectionconseiller WHERE login = ?");
 		
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();

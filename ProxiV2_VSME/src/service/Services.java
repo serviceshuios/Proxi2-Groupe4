@@ -564,6 +564,12 @@ public class Services implements IConseiller, IGerant {
 				*/
 		}
 
+	@Override
+	public boolean authentification(String login, String pwd) {
+		// TODO Auto-generated method stub
+		return idaoconseiller.authentification(login,pwd);
+	}
+
 	
 
 

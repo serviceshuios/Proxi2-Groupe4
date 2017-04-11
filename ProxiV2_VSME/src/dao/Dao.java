@@ -177,4 +177,10 @@ public class Dao implements IDaoConseiller, IDaoGerant {
 		return null;
 	}
 
+	@Override
+	public boolean authentification(String login, String pwd) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

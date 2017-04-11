@@ -10,6 +10,8 @@ import metier.Agence;
 import metier.CarteBancaire;
 import metier.Client;
 import metier.Compte;
+import metier.CompteCourant;
+import metier.CompteEpargne;
 import metier.Conseiller;
 import metier.Gerant;
 import metier.Placement;
@@ -27,16 +29,125 @@ public class Services implements IConseiller, IGerant {
 	IDaoConseiller idaoconseiller = new Dao();
 	IDaoGerant idaogerant = new Dao();
 	
-	public Services() {
-		super();
+	public Services() 
+		{
+			super();
+		}
+	
+	/**
+	 * Authentification du conseiller
+	 */
+	@Override
+	public boolean authentificationConseiller(String login, String pwd) 
+		{
+			return idaoconseiller.authentificationConseiller(login,pwd);
+		}
+	
+	
+	/**
+	 * Lister les clients d'un conseiller
+	 */
+	@Override
+	public Collection<Client> listerClient(Conseiller co) 
+		{
+			return idaoconseiller.listerClient(co);
+		}
+	
+	
+	/**
+	 * Modification du nom, prenom, adresse et email d'un client
+	 */
+	@Override
+	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) 
+		{
+			idaoconseiller.modifierClient(c, nom, prenom,a,email);	
+		}
+	
+	
+	/**
+	 * Lister les comptes d'un client
+	 */
+	@Override
+	public Collection<Compte> listerCompteClient (Client c) 
+		{
+			return idaoconseiller.listerCompteClient (c);
+		}
+
+
+		
+	/**
+	 * Lister les clients par mot clé (recherche dans le nom)
+	 */
+	@Override
+	public Collection<Client> listerClient(String motcle)
+		{
+			return idaoconseiller.listerClient(motcle);	
+		}
+	
+	
+	
+	/**
+	 * Virement d'un montant d'un compte c1(débiteur) à un compte c2(créditeur) 
+	 * @throws MontantSuperieurAuSoldeException 
+	 * @throws DecouvertNonAutorise 
+	 */
+	
+	@Override
+	public void effectuerVirement(int montant,Compte c1, Compte c2) throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
+		
+		if (montant<0) //Test si le montant entré est inférieur à 0
+		{                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+			throw new MontantNegatifException("montant inférieur à zero");
+		}
+		else 
+		{
+			if(c1 instanceof CompteEpargne) //Test si le compte est un compte Epargne
+			{
+				if(montant<c1.getSolde()) // Test si le montant est inferieur au solde du compte
+				{
+					idaoconseiller.effectuerVirement(montant, c1, c2);
+				}
+				else
+				{
+					throw new MontantSuperieurAuSoldeException("montant supperieur au solde");
+				}
+			}
+			else
+			{
+				if(c1 instanceof CompteCourant) //Test si le compte est un compte Courant
+				{
+					if((c1.getSolde()-montant)>-1000) //Test si le solde du compte viré est au dessus du découvert autorisé
+					{
+						idaoconseiller.effectuerVirement(montant, c1, c2);
+					}
+					else
+					{
+						throw new DecouvertNonAutorise("le decouvert n'autorise pas ce virement");
+					}
+				}
+			
+			}
+		}
+			
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Ajout d'un conseiller par un gérant
 	 */
-		@Override
-		public void ajouterConseiller(Gerant g, Conseiller co) {
-			idaogerant.ajouterConseiller(g, co);
+	@Override
+	public void ajouterConseiller(Gerant g, Conseiller co) 
+		{
+		idaogerant.ajouterConseiller(g, co);
 			
 			/*Collection<Conseiller> col = g.getConseillers(); // Récupère la liste des conseillers du gérant
 			col.add(co); //Ajoute le Conseiller co à la liste col
@@ -263,24 +374,7 @@ public class Services implements IConseiller, IGerant {
 			*/	
 		}
 
-		@Override
-		public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) {
-				idaoconseiller.modifierClient(c, nom, prenom,a,email);	
-			/*
-			 * c.setTelephone(telephone);
-			 * c.setSonAdresse(a);
-			 */
-			
-		}
-
-	/**
-	 * Affichage d'un client
-	 */
-
-		@Override
-		public Collection<Client> listerClient(Conseiller co) {
-		return idaoconseiller.listerClient(co);
-		}
+	
 	
 	
 	/**
@@ -356,72 +450,9 @@ public class Services implements IConseiller, IGerant {
 			*/
 		}
 
-		/**
-		 * Affichage d'un compte client
-		 */
-			@Override
-			public Collection<Compte> listerCompteClient (Client c) {
-				return idaoconseiller.listerCompteClient (c);
-			}
-
 	
-			@Override
-			public Collection<Client> listerClient(String motcle){
-				return idaoconseiller.listerClient(motcle);
-				
-			}
 			
-	/**
-	 * Virement d'un montant d'un compte A à un compte B 
-	 * @throws MontantSuperieurAuSoldeException 
-	 * @throws DecouvertNonAutorise 
-	 */
 	
-	@Override
-	public void effectuerVirement(int montant,Compte c1, Compte c2) throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
-		
-		idaoconseiller.effectuerVirement(montant, c1, c2);
-		
-		
-		/*
-		if (montant<0) //Test si le montant entré est inférieur à 0
-		{                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-			throw new MontantNegatifException("montant inférieur à zero");
-		}
-		else 
-		{
-			if(c1 instanceof CompteEpargne) //Test si le compte est un compte Epargne
-			{
-				if(montant<c1.getSolde()) // Test si le montant est inferieur au solde du compte
-				{
-					c1.setSolde(c1.getSolde()-montant);
-					c2.setSolde(c2.getSolde()+montant);
-				}
-				else
-				{
-					throw new MontantSuperieurAuSoldeException("montant supperieur au solde");
-				}
-			}
-			else
-			{
-				if(c1 instanceof CompteCourant) //Test si le compte est un compte Courant
-				{
-					if((c1.getSolde()-montant)>-1000) //Test si le solde du compte viré est au dessus du découvert autorisé
-					{
-						c1.setSolde(c1.getSolde()-montant);
-						c2.setSolde(c2.getSolde()+montant);
-					}
-					else
-					{
-						throw new DecouvertNonAutorise("le decouvert n'autorise pas ce virement");
-					}
-				}
-			
-			}
-		}
-			*/
-	}
-
 	/**
 	 * Realisation d'une simulation de crédit avec un montant, un taux et une durée de remboursement
 	 * @throws MontantNegatifException 
@@ -564,11 +595,7 @@ public class Services implements IConseiller, IGerant {
 				*/
 		}
 
-	@Override
-	public boolean authentification(String login, String pwd) {
-		// TODO Auto-generated method stub
-		return idaoconseiller.authentification(login,pwd);
-	}
+	
 
 	
 

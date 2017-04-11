@@ -29,7 +29,7 @@ import service.exception.MontantSuperieurAuSoldeException;
 public interface IConseiller {
 	
 
-	public boolean authentification(String login, String pwd);
+	public boolean authentificationConseiller(String login, String pwd);
 	
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients;
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email);

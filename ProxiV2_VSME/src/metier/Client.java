@@ -11,9 +11,17 @@ public class Client extends Personne {
 	private Conseiller conseiller;
 	private String typeClient; //particulier si client Particulier et entreprise si client Entreprise
 	private int idClient;
-	
+	private String email;
 
 
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public int getIdClient() {
 		return idClient;

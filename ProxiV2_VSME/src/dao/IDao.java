@@ -24,6 +24,8 @@ public interface IDao {
 
 	public boolean authentificationConseiller(String login, String pwd);
 	
+	public int compterNombreClient(Conseiller co);
+	
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients;
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email);
 	public void supprimerClient(Client c, Conseiller co);

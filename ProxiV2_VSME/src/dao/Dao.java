@@ -198,12 +198,60 @@ public class Dao implements IDao {
 				
 	}
 	
+	@Override
+	public int compterNombreClient(Conseiller co)
+	{
+		int i=0;
+		try {
+			Connection conn= DaoConnection.getConnection();
+			PreparedStatement ps = conn.prepareStatement("SELECT COUNT (idClient)nombreClient FROM client WHERE idConseiller = ?");
+			ps.setInt(1, co.getIdConseiller());
+			ResultSet rs = ps.executeQuery();
+			
+			i = rs.getInt("nombreClient");
+			return i;
+			
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DaoConnection.closeConnection();
+		return i;
+		
+	}
+	
+	
 	
 	@Override
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
 		try {
 			Connection conn= DaoConnection.getConnection();
-			String s= "INSERT INTO client(typeClient,idConseiller,)";
+			String s= "INSERT INTO client(typeClient,idConseiller) VALUES (?,?)";
+			PreparedStatement ps = conn.prepareStatement(s);
+			ps.setString(1, c.getTypeClient());
+			ps.setInt(2, co.getIdConseiller());
+			String s2= "INSERT INTO personne(nom, prenom, telephone, email) VALUES (?,?,?,?)";
+			PreparedStatement ps2 = conn.prepareStatement(s2);
+			ps2.setString(1, c.getNom());
+			ps2.setString(2, c.getPrenom());
+			ps2.setString(3, c.getTelephone());
+			ps2.setString(4, c.getEmail());
+			ps2.setInt(5, c.getIdClient());
+			String s3 = "INSERT INTO adresse(adresse, codePostale, ville) VALUES (?,?,?)";
+			PreparedStatement ps3 = conn.prepareStatement(s3);
+			Adresse a1 = new Adresse();
+			a1 = c.getSonAdresse();
+			ps3.setString(1, a1.getAdresse());
+			ps3.setInt(2, a1.getCodePostale());
+			ps3.setString(3, a1.getVille());
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		DaoConnection.closeConnection();
+			
 		
 	}
 	

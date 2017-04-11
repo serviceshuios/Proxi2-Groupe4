@@ -8,6 +8,8 @@ import metier.Adresse;
 import metier.Agence;
 import metier.CarteBancaire;
 import metier.Client;
+import metier.ClientEntreprise;
+import metier.ClientParticulier;
 import metier.Compte;
 import metier.CompteCourant;
 import metier.CompteEpargne;
@@ -133,29 +135,22 @@ public class Services implements IConseiller, IGerant {
 	
 	@Override
 	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
-	
-		idao.ajouterClient(co, c);
 		
-		/*if(co.getClients().size()<10)
+		if(idao.compterNombreClient(co)<10)
 				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
 			IConseiller cs = new Services();
-			c=cs.creerClient(c);
+			creerClient(c);
 			
 			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
 		
-				//Ajouter client particulier
-				Collection<Client> cl1 = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection cl1
-				cl1.add(c); //Ajout du client c à la collection cl1
-				co.setClients(cl1); //Association de la nouvelle collection cl1 au conseiller co
-				c.setConseiller(co); //Association du conseiller co au client c
+				idao.ajouterClient(co, c);
 				
 			}
 			
-		
 		} else{
 			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");
 		}	
-	*/		
+	
 	}
 	
 	

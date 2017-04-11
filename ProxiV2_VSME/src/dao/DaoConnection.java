@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DaoConnection {
 
 	private static final String PILOTE = "com.mysql.jdbc.Driver";
-	private static final String URL="jdbc:mysql://localhost:3306/bddclients";
+	private static final String URL="jdbc:mysql://localhost:3306/proxiv2";
 	private static final String USER="root";
 	private static final String mdp="";
 	private static Connection conn=null;

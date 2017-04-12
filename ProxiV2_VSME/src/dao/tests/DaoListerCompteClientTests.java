@@ -15,7 +15,9 @@ import metier.Compte;
 public class DaoListerCompteClientTests {
 
 	
-	// test la méthode listercompteclient d'un client dans le cas ou le client possède deux comptes
+	/**
+	 *  test la méthode listercompteclient d'un client dans le cas ou le client possède deux comptes
+	 */
 	@Test
 	public void listerCompteClientTest() {
 		
@@ -31,7 +33,9 @@ public class DaoListerCompteClientTests {
 	}
 	
 	
-	// test la méthode listercompteclient d'un client dans le cas ou le client possède un seul compte
+	/**
+	 * test la méthode listercompteclient d'un client dans le cas ou le client possède un seul compte
+	 */
 		@Test
 		public void listerCompteClientTest2() {
 			
@@ -46,7 +50,9 @@ public class DaoListerCompteClientTests {
 			
 		}
 
-		// test la méthode listercompteclient d'un client dans le cas ou le client ne possède pas de compte
+		/**
+		 * test la méthode listercompteclient d'un client dans le cas ou le client ne possède pas de compte
+		 */
 				@Test
 				public void listerCompteClientTest3() {
 					

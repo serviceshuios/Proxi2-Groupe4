@@ -17,7 +17,9 @@ import service.exception.LeConseillerADeja10Clients;
 public class DaoListerClientTests {
 
 	
-	// Test la méthode lister client dans le cas d'un conseiller qui a 10 clients
+	/**
+	 * Test la méthode lister client dans le cas d'un conseiller qui a 10 clients
+	 */
 	@Test
 	public void listerClienttest() {
 		
@@ -32,7 +34,9 @@ public class DaoListerClientTests {
 		
 	}
 	
-	// Test la méthode lister client par mot clé 
+	/**
+	 * Test la méthode lister client par mot clé 
+	 */
 		@Test
 		public void listerClienttestParMotCle() {
 			

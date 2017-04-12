@@ -16,7 +16,7 @@ public class DaoEffectuerVirementTests {
 
 	
 	/**
-	 * 
+	 * Methode de test pour tester le virement d'un compte à un autre compte
 	 * @throws SQLException
 	 */
 	@Test

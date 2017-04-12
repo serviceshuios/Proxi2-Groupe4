@@ -11,9 +11,10 @@ import metier.Adresse;
 import metier.Agence;
 import metier.CarteBancaire;
 import metier.Client;
+import metier.ClientEntreprise;
+import metier.ClientParticulier;
 import metier.Compte;
 import metier.Conseiller;
-import metier.Gerant;
 import metier.Placement;
 import service.exception.AbsenceDeCompteCourantException;
 import service.exception.AbsenceDeCompteEpargneException;
@@ -361,6 +362,21 @@ public class Dao implements IDao {
 			
 			int idAdresse = idao.recuperationidAdresse(c.getSonAdresse());
 			ps2.setInt(6, idAdresse);
+			
+			if(c instanceof ClientParticulier)
+			{
+				String s4= "INSERT INTO clientparticulier(idClient) VALUES (?)";
+				PreparedStatement ps4 = conn.prepareStatement(s4);
+				ps4.setInt(1, idClient);
+				
+			}
+			
+			if(c instanceof ClientEntreprise)
+			{
+				String s5= "INSERT INTO cliententreprise(idClient) VALUES (?)";
+				PreparedStatement ps5 = conn.prepareStatement(s5);
+				ps5.setInt(1, idClient);
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

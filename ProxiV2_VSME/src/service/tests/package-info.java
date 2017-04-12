@@ -2,7 +2,7 @@
 /**
  * Package service test
  * Contient tous les tests JUNIT 
- * @author ME VLG
+ * @author ME VS
  *
  */
 package service.tests;

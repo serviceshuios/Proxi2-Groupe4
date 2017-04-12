@@ -1,5 +1,6 @@
 package service;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 import dao.Dao;
@@ -35,11 +36,21 @@ public class Services implements IConseiller, IGerant {
 			super();
 		}
 	
+	public int compterNombreClient(int idcon)
+	{
+		return idao.compterNombreClient(idcon);
+	}
+	
+	public Collection<Client> recuperationClient(int idCli) throws SQLException
+	{
+		return idao.recuperationClient(idCli);
+	}
+	
 	/**
 	 * Authentification du conseiller
 	 */
 	@Override
-	public boolean authentificationConseiller(String login, String pwd) 
+	public int authentificationConseiller(String login, String pwd) 
 		{
 			return idao.authentificationConseiller(login,pwd);
 		}
@@ -49,9 +60,9 @@ public class Services implements IConseiller, IGerant {
 	 * Lister les clients d'un conseiller
 	 */
 	@Override
-	public Collection<Client> listerClient(Conseiller co) 
+	public Collection<Client> listerClient(int idcon) 
 		{
-			return idao.listerClient(co);
+			return idao.listerClient(idcon);
 		}
 	
 	
@@ -102,7 +113,11 @@ public class Services implements IConseiller, IGerant {
 		}
 		else 
 		{
-			if(c1 instanceof CompteEpargne) //Test si le compte est un compte Epargne
+			String type;
+			try {
+				type = idao.recuperationTypeCompte(c1);
+			
+			if(type.equals("epargne")) //Test si le compte est un compte Epargne
 			{
 				if(montant<c1.getSolde()) // Test si le montant est inferieur au solde du compte
 				{
@@ -115,7 +130,7 @@ public class Services implements IConseiller, IGerant {
 			}
 			else
 			{
-				if(c1 instanceof CompteCourant) //Test si le compte est un compte Courant
+				if(type.equals("courant")) //Test si le compte est un compte Courant
 				{
 					if((c1.getSolde()-montant)>-1000) //Test si le solde du compte viré est au dessus du découvert autorisé
 					{
@@ -128,22 +143,25 @@ public class Services implements IConseiller, IGerant {
 				}
 			
 			}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	
 			
 	}
 
 	
 	@Override
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
+	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		
-		if(idao.compterNombreClient(co)<10)
-				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
-			IConseiller cs = new Services();
-			creerClient(c);
-			
-			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
+		if(idao.compterNombreClient(idcon)<10)
+				{ 
 		
-				idao.ajouterClient(co, c);
+			if(c.getTypeClient().equals("particulier") || c.getTypeClient().equals("entreprise")){ //Test si client entreprise ou particulier
+		
+				idao.ajouterClient(idcon, c);
 				
 			}
 			
@@ -168,9 +186,9 @@ public class Services implements IConseiller, IGerant {
 	 * Ajout d'un conseiller par un gérant
 	 */
 	@Override
-	public void ajouterConseiller(Gerant g, Conseiller co) 
+	public void ajouterConseiller(int idge, Conseiller co) 
 		{
-		idao.ajouterConseiller(g, co);
+		idao.ajouterConseiller(idge, co);
 			
 			/*Collection<Conseiller> col = g.getConseillers(); // Récupère la liste des conseillers du gérant
 			col.add(co); //Ajoute le Conseiller co à la liste col
@@ -197,12 +215,15 @@ public class Services implements IConseiller, IGerant {
 	 * Suppression d'un conseiller par un gérant
 	 */
 		@Override
-		public void supprimerConseiller(Conseiller c, Gerant g) {
-
+		public void supprimerConseiller(Conseiller c, int idge) {
+			
+			idao.supprimerConseiller(c, idge);
 		
+			/*
 			Collection<Conseiller> col1 = g.getConseillers(); //Récupère la liste des conseillers du gérant
 			col1.remove(c); //supprimer le conseiller c
 			g.setConseillers(col1); //Associe la nouvelle liste au gérant
+			*/
 		
 			
 		}
@@ -211,8 +232,8 @@ public class Services implements IConseiller, IGerant {
 	 */
 
 		@Override
-		public void afficherConseiller(Conseiller c) {
-			idao.afficherConseiller(c);
+		public void listerConseiller(int idge) {
+			idao.listerConseiller(idge);
 		}
 	
 	
@@ -247,54 +268,15 @@ public class Services implements IConseiller, IGerant {
 	}
 
 	
-	/**
-	 * Methode de creation d'un Client
-	 * 
-	 * 
-	 * @param comptes
-	 *            parametre qui donne la liste de compte du client
-	 * @param patrimoine
-	 *            parametre qui donne le patrimoine du client
-	 * @param credits
-	 *            paramettre qui donne les credits du client
-	 * @param conseiller
-	 *            parametre qui donne le conseiller du client
-	 * @param typeClient
-	 *            parametre qui premet de choisir le type de client
-	 * @return retourne l'Objet Client Creer
-	 */
-
-		private Client creerClient(Client c) {
-
-			return idao.creerClient(c);
-			/*
-			// pour choisir type de client
-
-			if(c.getTypeClient().equals("particulier")) {
-				ClientParticulier p = new ClientParticulier();
-				return p;
-			}
-			if(c.getTypeClient().equals("entreprise"))
-				{
-				ClientEntreprise e = new ClientEntreprise();
-				return e;
-			}
-			
-			return null;
-			*/
-		}
-			
-		
+	
 		
 	
-	
+		
 	/**
 	 * Ajout d'un compte Epargne ou un Compte Courant à un client
 	 * @throws CompteEpargneExistantException 
 	 * @throws CompteCourantExistantException 
 	 */
-	
-	
 	private Compte creationCompte(Compte c) {
 
 		return idao.creationCompte(c);
@@ -379,8 +361,8 @@ public class Services implements IConseiller, IGerant {
 	 */
 
 		@Override
-		public void supprimerClient(Client c, Conseiller co) {
-			idao.supprimerClient(c, co);
+		public void supprimerClient(Client c, int idcon) {
+			idao.supprimerClient(c, idcon);
 			/*
 			Collection<Client> col = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection col
 			col.remove(c);	//Suppression du client de la collection

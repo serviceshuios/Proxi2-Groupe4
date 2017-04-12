@@ -5,34 +5,52 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Authenticate</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<title>Authentification conseiller</title>
 </head>
 <body>
+	<section class="row">
 
-	<c:if test="${sessionScope.attemptsCount > 0}">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<h1>ProxiBanqueV2</h1>
+		<hr />
+	</div>
+	</section>
+	<section class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<h2>Authentification conseiller</h2>
+		<c:if test="${sessionScope.attemptsCount > 0}">
+		Echec authentification conseiller<br />
 		Attention déjà 
 		<c:out value="${sessionScope.attemptsCount}"></c:out>
-		tentatives de connections<br />
-	</c:if>
+		tentative(s) de connections<br />
+		</c:if>
 
-	<c:choose>
-		<c:when test="${sessionScope.attemptsCount > 99}">
+		<c:choose>
+			<c:when test="${sessionScope.attemptsCount > 3}">
 			Trop de tentatives, veuillez réessayer plus tard<br />
-		</c:when>
-		<c:otherwise>
-			<form method="post"
-				action="GestionConseiller?action=interfaceConseiller">
-				<fieldset id="section-1">
-					<legend>Authentification Conseiller</legend>
-					<label for="id">saisir votre identifiant :</label> <input
-						type="text" name="id" id="id" /><br /> <label for="pwd">saisir
-						votre mot de passe :</label> <input type="password" name="pwd" id="pwd" /><br />
-				</fieldset>
-				<input type="submit" name="validauthenticate" value="valider" /><br />
-			</form>
-		</c:otherwise>
-	</c:choose>
-	<a href="index.html">retour accueil</a>
-
+			</c:when>
+			<c:otherwise>
+				<form method="post"
+					action="GestionConseiller?action=interfaceConseiller">
+					<fieldset id="section-1">
+						<legend>Page de connection</legend>
+						<label for="id">saisir votre identifiant :</label> <input
+							type="text" name="id" id="id" /><br /> <label for="pwd">saisir
+							votre mot de passe :</label> <input type="password" name="pwd" id="pwd" /><br />
+					</fieldset>
+					<input type="submit" name="validauthenticate" value="valider" /><br />
+				</form>
+			</c:otherwise>
+		</c:choose>
+	</div>
+	</section>
+	<section class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<br />
+		<a href="index.html">retour accueil</a>
+	</div>
+	</section>
 </body>
 </html>

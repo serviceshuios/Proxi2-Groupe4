@@ -14,6 +14,7 @@ import metier.Conseiller;
 import metier.Gerant;
 import service.IGerant;
 import service.ServiceGerant;
+import service.Services;
 import service.exception.AuditNegatifException;
 
 /**
@@ -27,22 +28,22 @@ public class ServiceGerantAgenceTest {
 	public void testAuditerAgence() throws AuditNegatifException {
 		
 		
-		IGerant sg = new ServiceGerant(); //Création d'un service
+		IGerant sg = new Services(); //Création d'un service
 		Gerant gerant1 = new Gerant();	//Création d'un gerant
 		Conseiller conseiller1= new Conseiller();	//Création d'un conseiller
 		
-		Collection<Conseiller> col1 = gerant1.getMesConseillers();	//Association du conseiller au gérant
+		Collection<Conseiller> col1 = gerant1.getConseillers();	//Association du conseiller au gérant
 		col1.add(conseiller1);
-		gerant1.setMesConseillers(col1);
-		conseiller1.setMonGerant(gerant1);
+		gerant1.setConseillers(col1);
+		conseiller1.setGerant(gerant1);
 		
 		
 		Client client1 = new Client();//Création d'un client
-		client1.setTypeClient(1);
+		client1.setTypeClient("particulier");
 		Compte compte1 = new Compte();	//Création d'un compte
 		compte1.setSolde(200);	
-		client1.setMonCompteCourant(compte1); //Association du compte au client
-		Collection<Client> colclient1= conseiller1.getMesClientsParticuliers();	//Association du client au conseiller1
+		client1.setComptes(compte1); //Association du compte au client
+		Collection<Client> colclient1= conseiller1.getClients();	//Association du client au conseiller1
 		colclient1.add(client1);
 		conseiller1.setMesClientsParticuliers(colclient1);
 		client1.setMonConseillerClient(conseiller1);

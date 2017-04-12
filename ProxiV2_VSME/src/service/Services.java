@@ -1,5 +1,6 @@
 package service;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 import dao.Dao;
@@ -102,7 +103,11 @@ public class Services implements IConseiller, IGerant {
 		}
 		else 
 		{
-			if(c1 instanceof CompteEpargne) //Test si le compte est un compte Epargne
+			String type;
+			try {
+				type = idao.recuperationTypeCompte(c1);
+			
+			if(type.equals("epargne")) //Test si le compte est un compte Epargne
 			{
 				if(montant<c1.getSolde()) // Test si le montant est inferieur au solde du compte
 				{
@@ -115,7 +120,7 @@ public class Services implements IConseiller, IGerant {
 			}
 			else
 			{
-				if(c1 instanceof CompteCourant) //Test si le compte est un compte Courant
+				if(type.equals("courant")) //Test si le compte est un compte Courant
 				{
 					if((c1.getSolde()-montant)>-1000) //Test si le solde du compte viré est au dessus du découvert autorisé
 					{
@@ -128,7 +133,12 @@ public class Services implements IConseiller, IGerant {
 				}
 			
 			}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	
 			
 	}
 
@@ -248,54 +258,15 @@ public class Services implements IConseiller, IGerant {
 	}
 
 	
-	/**
-	 * Methode de creation d'un Client
-	 * 
-	 * 
-	 * @param comptes
-	 *            parametre qui donne la liste de compte du client
-	 * @param patrimoine
-	 *            parametre qui donne le patrimoine du client
-	 * @param credits
-	 *            paramettre qui donne les credits du client
-	 * @param conseiller
-	 *            parametre qui donne le conseiller du client
-	 * @param typeClient
-	 *            parametre qui premet de choisir le type de client
-	 * @return retourne l'Objet Client Creer
-	 */
-
-		private Client creerClient(Client c) {
-
-			return idao.creerClient(c);
-			/*
-			// pour choisir type de client
-
-			if(c.getTypeClient().equals("particulier")) {
-				ClientParticulier p = new ClientParticulier();
-				return p;
-			}
-			if(c.getTypeClient().equals("entreprise"))
-				{
-				ClientEntreprise e = new ClientEntreprise();
-				return e;
-			}
-			
-			return null;
-			*/
-		}
-			
-		
+	
 		
 	
-	
+		
 	/**
 	 * Ajout d'un compte Epargne ou un Compte Courant à un client
 	 * @throws CompteEpargneExistantException 
 	 * @throws CompteCourantExistantException 
 	 */
-	
-	
 	private Compte creationCompte(Compte c) {
 
 		return idao.creationCompte(c);

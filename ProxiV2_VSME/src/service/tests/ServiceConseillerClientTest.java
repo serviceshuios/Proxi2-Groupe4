@@ -1,18 +1,14 @@
 package service.tests;
 
-import static org.junit.Assert.fail;
-
 import java.util.Collection;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import metier.Adresse;
 import metier.Client;
 import metier.Conseiller;
 import service.IConseiller;
-import service.ServiceConseiller;
 import service.Services;
 import service.exception.LeConseillerADeja10Clients;
 
@@ -37,7 +33,7 @@ public class ServiceConseillerClientTest {
 		Conseiller conseiller2 = new Conseiller(); //Créer un 2eme conseiller
 		Client client2 = new Client("Toto","Titi","0606060606",001,a1,"particulier"); //Création d'un client particulier 2 identique au client 1
 		try {
-			sc.ajouterClient(conseiller2, client2);
+			sc.ajouterClient(conseiller2.getIdConseiller(), client2);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,7 +59,7 @@ public class ServiceConseillerClientTest {
 		Conseiller conseiller2 = new Conseiller();
 		Client client2 = new Client("Toto","Titi","0606060606",001,a1,"entreprise");
 		try {
-			sc.ajouterClient(conseiller2, client2);
+			sc.ajouterClient(conseiller2.getIdConseiller(), client2);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,7 +149,7 @@ public class ServiceConseillerClientTest {
 		Client c11 = new Client ("POPO","popo","0606050505",657,a11,"particulier");
 	
 		try {
-			sc.ajouterClient(conseiller2, c11);
+			sc.ajouterClient(conseiller2.getIdConseiller(), c11);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -213,7 +209,7 @@ public class ServiceConseillerClientTest {
 		col2.add(c2);
 		conseiller2.setClients(col2);
 		c2.setConseiller(conseiller2);
-		ge.supprimerClient(c2,conseiller2);	//Utilisation de la méthode SupprimerClient
+		ge.supprimerClient(c2,conseiller2.getIdConseiller());	//Utilisation de la méthode SupprimerClient
 		
 		//Test d'égalité de la tailler de la collection des client particuliers en conseiller 1 et 2
 		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()));
@@ -244,7 +240,7 @@ public class ServiceConseillerClientTest {
 		col2.add(c2);
 		conseiller2.setClients(col2);
 		c2.setConseiller(conseiller2);
-		ge.supprimerClient(c2,conseiller2);
+		ge.supprimerClient(c2,conseiller2.getIdConseiller());
 		
 		
 		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()));

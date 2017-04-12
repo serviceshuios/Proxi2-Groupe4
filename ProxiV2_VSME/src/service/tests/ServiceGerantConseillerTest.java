@@ -11,6 +11,7 @@ import metier.Conseiller;
 import metier.Gerant;
 import service.IGerant;
 import service.ServiceGerant;
+import service.Services;
 
 public class ServiceGerantConseillerTest {
 
@@ -18,7 +19,7 @@ public class ServiceGerantConseillerTest {
 	@Test
 	public void testAjouterConseiller() {
 
-		IGerant ge = new ServiceGerant();
+		IGerant ge = new Services();
 		
 		Gerant g1 = new Gerant();
 		Adresse a1 = new Adresse("rue A",69000,"Lyon");

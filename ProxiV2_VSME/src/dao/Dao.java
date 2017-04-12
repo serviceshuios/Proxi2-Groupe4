@@ -91,6 +91,7 @@ public class Dao implements IDao {
 					{
 						Adresse a1 = new Adresse(rs.getString("adresse"), rs.getInt("codePostale"), rs.getString("ville"));
 						Client c1= new Client ();
+						c1.setIdClient(rs.getInt("idClient"));
 						c1.setNom(rs.getString("nom"));
 						c1.setPrenom(rs.getString("prenom"));
 						c1.setTelephone(rs.getString("telephone"));
@@ -487,6 +488,26 @@ public class Dao implements IDao {
 		
 	}
 	
+	
+	
+	/**
+	 * méthode de récupération du type de compte a partir d'un compte
+	 */
+	@Override
+	public String recuperationTypeCompte(Compte c)throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		String type=null;
+			String selection = "SELECT typeCompte FROM compte WHERE idCompte = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, c.getIdCompte());
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				type = rs1.getString("typeCompte");
+				return type;
+		}
+		return type;
+	}
 	
 	
 	

@@ -60,6 +60,7 @@ public interface IDao {
 	int recuperationidAdresse(Adresse a) throws SQLException;
 	int recuperationidClient(int idPersonne) throws SQLException;
 	int recuperationidPersonne(Client c) throws SQLException;
+	String recuperationTypeCompte(Compte c) throws SQLException;
 	
 	
 }

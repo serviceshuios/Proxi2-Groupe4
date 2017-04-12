@@ -11,8 +11,12 @@ import metier.Client;
 
 public class DaoModifierClientTests {
 
+	
+	/**
+	 * Test la modification d'un client
+	 */
 	@Test
-	public void test() {
+	public void modificationClientTest() {
 		IDao idao = new Dao();
 		Client c= new Client();
 		c.setIdClient(13);

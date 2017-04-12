@@ -159,11 +159,11 @@ public class Services implements IConseiller, IGerant {
 		if(idao.compterNombreClient(idcon)<10)
 				{ 
 		
-			//if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
+			if(c.getTypeClient().equals("particulier") || c.getTypeClient().equals("entreprise")){ //Test si client entreprise ou particulier
 		
 				idao.ajouterClient(idcon, c);
 				
-			//}
+			}
 			
 		} else{
 			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");

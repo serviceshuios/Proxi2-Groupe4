@@ -62,6 +62,8 @@ public interface IDao {
 	public int recuperationidPersonne(Client c) throws SQLException;
 	public String recuperationTypeCompte(Compte c) throws SQLException;
 	public Collection<Client> recuperationClient(int idCli) throws SQLException;
+	int recuperationidClientParticulier(int idCli) throws SQLException;
+	int recuperationidClientEntreprise(int idCli) throws SQLException;
 	
 	
 }

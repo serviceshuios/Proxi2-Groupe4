@@ -404,6 +404,47 @@ public class Dao implements IDao {
 	
 	
 	/**
+	 * méthode de récupération de l'idparticulier
+	 */
+	@Override
+	public int recuperationidClientParticulier(int idCli)throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT idClientParticulier FROM clientparticulier WHERE idClient = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, idCli);
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idClientParticulier");
+				return id;
+		}
+		return id;
+	}
+	
+	
+	/**
+	 * méthode de récupération de l'idparticulier
+	 */
+	@Override
+	public int recuperationidClientEntreprise(int idCli)throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT idClientEntreprise FROM cliententreprise WHERE idClient = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, idCli);
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idClientEntreprise");
+				return id;
+		}
+		return id;
+	}
+	
+	
+	
+	/**
 	 * Methode pour ajouter un client en Base de donnees (tables personne, client et adresse)
 	 */
 	@Override
@@ -460,22 +501,38 @@ public class Dao implements IDao {
 			ps4.executeUpdate();
 			
 			//ajout du client dans la table clientparticulier si c'est un client particulier
-			if(c instanceof ClientParticulier)
+			if(c.getTypeClient().equals("particulier"))
 			{
 				String s5= "INSERT INTO clientparticulier(idClient) VALUES (?)";
 				PreparedStatement ps5 = conn.prepareStatement(s5);
 				ps5.setInt(1, idCli);
 				ps5.executeUpdate();
 				
+				int idParticulier = idao.recuperationidClientParticulier(idCli);
+				
+				String s7= "UPDATE client SET idClientParticulier = ? WHERE idClient = ?";
+				PreparedStatement ps7 = conn.prepareStatement(s7);
+				ps7.setInt(1, idParticulier);
+				ps7.setInt(2, idCli);
+				ps7.executeUpdate();
+				
 			}
 			
 			//ajout du client dans la table cliententreprise si c'est un client entreprise
-			if(c instanceof ClientEntreprise)
+			if(c.getTypeClient().equals("entreprise"))
 			{
 				String s6= "INSERT INTO cliententreprise(idClient) VALUES (?)";
 				PreparedStatement ps6 = conn.prepareStatement(s6);
 				ps6.setInt(1, idCli);
 				ps6.executeUpdate();
+				
+				int idEntreprise = idao.recuperationidClientEntreprise(idCli);
+				
+				String s7= "UPDATE client SET idClientEntreprise = ? WHERE idClient = ?";
+				PreparedStatement ps7 = conn.prepareStatement(s7);
+				ps7.setInt(1, idEntreprise);
+				ps7.setInt(2, idCli);
+				ps7.executeUpdate();
 			}
 			
 		} catch (Exception e) {

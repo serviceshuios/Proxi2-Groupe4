@@ -58,7 +58,8 @@ public interface IDao {
 	public void listerConseiller(int idge);
 	void modifierConseiller(Conseiller c, Adresse a, String telephone);
 	int recuperationidAdresse(Adresse a) throws SQLException;
-	int recuperationidClient(Client c) throws SQLException;
+	int recuperationidClient(int idPersonne) throws SQLException;
+	int recuperationidPersonne(Client c) throws SQLException;
 	
 	
 }

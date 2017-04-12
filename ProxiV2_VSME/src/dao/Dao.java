@@ -35,21 +35,25 @@ public class Dao implements IDao {
 	@Override
 	public int authentificationConseiller(String login, String pwd) {
 		
-		int id = 0;
+		int id = 0; //initialisation de l'idConseiller à 0
 		try {
+			
+			//Selection du mot de passe et l'idConseiller associés au login
 		Connection conn= DaoConnection.getConnection();
 		PreparedStatement ps = conn.prepareStatement("SELECT pwd, idConseiller FROM connectionconseiller WHERE login = ?");
 		
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
 		
-		
+		//si le login existe, alors resultsat contient un mot de passe
 		if (rs.next())
 		{
 			
 			String password = rs.getString("pwd");
+			//test si le mot de passe envoyé correspond au mot de passe en base de données 
 			if(password.equals(pwd))
 			{
+				//si il correspond, on renvoie l'idConseiller qui servira dans d'autres methodes
 			id=rs.getInt("idConseiller");
 			}
 		}
@@ -58,6 +62,7 @@ public class Dao implements IDao {
 			e.printStackTrace();
 		}
 		DaoConnection.closeConnection();
+		//cas où le mot de passe ne correspond pas à celuyi en base de données : la méthode renvoie 0
 		return id;
 		
 	}
@@ -72,13 +77,16 @@ public class Dao implements IDao {
 	@Override
 	public Collection<Client> listerClient(int idcon) {
 		
+		//instantiation d'une collecton de clients
 		Collection<Client> cl = new ArrayList<Client>();
 		try {
 			Connection conn= DaoConnection.getConnection();
+			//requete SQL pour récupérer idclient, nom, prenom, telephone, email, adresse, codepostale, ville, type de client
 			PreparedStatement ps = conn.prepareStatement("SELECT client.idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse, conseiller WHERE conseiller.idConseiller=client.idConseiller AND adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient and conseiller.idConseiller=? ");
 			ps.setInt(1, idcon);
 			ResultSet rs = ps.executeQuery();
 			
+			//methode de remplissage de la collection clients avec les valeurs selectionnées
 			while(rs.next())
 					{
 						Adresse a1 = new Adresse(rs.getString("adresse"), rs.getInt("codePostale"), rs.getString("ville"));
@@ -97,6 +105,7 @@ public class Dao implements IDao {
 					e.printStackTrace();
 				}
 		DaoConnection.closeConnection();
+		//retourne la collection de clients obtenue
 		return cl;
 		
 		
@@ -108,6 +117,8 @@ public class Dao implements IDao {
 	 */
 	@Override
 	public int recuperationidAdresse(Client c) throws SQLException{
+		
+		//requete sql pour récuperer l'adresse d'une client à partir de l'idClient
 		Connection conn= DaoConnection.getConnection();
 		int id=0;
 			String selection = "SELECT idadresse FROM personne WHERE idClient = ?";
@@ -119,15 +130,20 @@ public class Dao implements IDao {
 				id = rs1.getInt("idadresse");
 				return id;
 		}
+			//retourne l'idAdresse
 		return id;
 	}
 	
-	
+	/**
+	 * Methode pour récupérer l'idAdresse à partir d'une adresse dans la base de données
+	 */
 	@Override
 	public int recuperationidAdresse(Adresse a) throws SQLException{
+		
+		//requete sql pour récuperer l'adresse d'une client à partir d'une adresse complete
 		Connection conn= DaoConnection.getConnection();
 		int id=0;
-			String selection = "SELECT idadresse FROM adresse WHERE adresse = ? AND code postale = ? AND  ville = ?";
+			String selection = "SELECT idadresse FROM adresse WHERE adresse = ? AND codepostale = ? AND  ville = ?";
 			PreparedStatement psselection = conn.prepareStatement(selection);
 			psselection.setString(1, a.getAdresse());
 			psselection.setInt(2, a.getCodePostale());
@@ -138,6 +154,7 @@ public class Dao implements IDao {
 				id = rs1.getInt("idadresse");
 				return id;
 		}
+			//retourne l'idAdresse
 		return id;
 	}
 	
@@ -149,6 +166,7 @@ public class Dao implements IDao {
 		try {
 			IDao idao = new Dao();
 			
+			//Requete sql pour changer le nom, le prenom et l'email du client dans la table personne a partir de l'idclient
 			Connection conn= DaoConnection.getConnection();
 			String s= "UPDATE personne SET nom = ?, prenom = ? , email = ?  WHERE personne.idClient = ? ";
 			PreparedStatement ps = conn.prepareStatement(s);
@@ -157,6 +175,7 @@ public class Dao implements IDao {
 			ps.setString(3, email);
 			ps.setInt(4, c.getIdClient());
 			ps.executeUpdate();
+			
 			
 			int id = idao.recuperationidAdresse(c);
 			
@@ -314,10 +333,27 @@ public class Dao implements IDao {
 	
 	
 	@Override
-	public int recuperationidClient(Client c) throws SQLException{
+	public int recuperationidClient(int idPersonne) throws SQLException{
 		Connection conn= DaoConnection.getConnection();
 		int id=0;
-			String selection = "SELECT idclient FROM personne WHERE nom = ? AND prenom = ? AND  email = ?";
+			String selection = "SELECT idClient FROM client WHERE id = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, idPersonne);
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idClient");
+				return id;
+		}
+		return id;
+	}
+	
+	
+	@Override
+	public int recuperationidPersonne(Client c)throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT id FROM personne WHERE nom = ? AND prenom = ? AND  email = ?";
 			PreparedStatement psselection = conn.prepareStatement(selection);
 			psselection.setString(1, c.getNom());
 			psselection.setString(2, c.getPrenom());
@@ -325,22 +361,39 @@ public class Dao implements IDao {
 			ResultSet rs1 = psselection.executeQuery();
 			if(rs1.next())
 		{
-				id = rs1.getInt("idadresse");
+				id = rs1.getInt("id");
 				return id;
 		}
 		return id;
 	}
 	
-	
-	
 	@Override
 	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		try {
 			Connection conn= DaoConnection.getConnection();
-			String s= "INSERT INTO client(typeClient,idConseiller) VALUES (?,?)";
+			String s2= "INSERT INTO personne(nom, prenom, telephone, email) VALUES (?,?,?,?)";
+			PreparedStatement ps2 = conn.prepareStatement(s2);
+			ps2.setString(1, c.getNom());
+			ps2.setString(2, c.getPrenom());
+			ps2.setString(3, c.getTelephone());
+			ps2.setString(4, c.getEmail());
+			ps2.executeUpdate();
+			
+			IDao idao = new Dao();
+			//recuperation idpersonne
+			int idPersonne = idao.recuperationidPersonne(c);
+			System.out.println(idPersonne);
+			
+			String s= "INSERT INTO client(typeClient, idConseiller,id) VALUES (?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(s);
 			ps.setString(1, c.getTypeClient());
 			ps.setInt(2, idcon);
+			ps.setInt(3, idPersonne);
+			ps.executeUpdate();
+			
+			
+			
+			
 			String s3 = "INSERT INTO adresse(adresse, codePostale, ville) VALUES (?,?,?)";
 			PreparedStatement ps3 = conn.prepareStatement(s3);
 			Adresse a1 = new Adresse();
@@ -348,34 +401,39 @@ public class Dao implements IDao {
 			ps3.setString(1, a1.getAdresse());
 			ps3.setInt(2, a1.getCodePostale());
 			ps3.setString(3, a1.getVille());
-			String s2= "INSERT INTO personne(nom, prenom, telephone, email, idClient, idAdresse) VALUES (?,?,?,?,?,?)";
-			PreparedStatement ps2 = conn.prepareStatement(s2);
-			ps2.setString(1, c.getNom());
-			ps2.setString(2, c.getPrenom());
-			ps2.setString(3, c.getTelephone());
-			ps2.setString(4, c.getEmail());
+			ps3.executeUpdate();
 			
-			IDao idao = new Dao();
 			
-			int idClient = idao.recuperationidClient(c);
-			ps2.setInt(5, idClient);
 			
-			int idAdresse = idao.recuperationidAdresse(c.getSonAdresse());
-			ps2.setInt(6, idAdresse);
+			int idCli = idao.recuperationidClient(idPersonne);
+			System.out.println(idCli);
+			int idAdresse = idao.recuperationidAdresse(a1);
+			System.out.println(idAdresse);
+			
+			
+			String s4= "UPDATE personne SET idClient =?, idAdresse = ? WHERE id = ? ";
+			PreparedStatement ps4= conn.prepareStatement(s4);
+			ps4.setInt(1, idCli);
+			ps4.setInt(2, idAdresse);
+			ps4.setInt(3, idPersonne);
+			ps4.executeUpdate();
+			
 			
 			if(c instanceof ClientParticulier)
 			{
-				String s4= "INSERT INTO clientparticulier(idClient) VALUES (?)";
-				PreparedStatement ps4 = conn.prepareStatement(s4);
-				ps4.setInt(1, idClient);
+				String s5= "INSERT INTO clientparticulier(idClient) VALUES (?)";
+				PreparedStatement ps5 = conn.prepareStatement(s5);
+				ps5.setInt(1, idCli);
+				ps5.executeUpdate();
 				
 			}
 			
 			if(c instanceof ClientEntreprise)
 			{
-				String s5= "INSERT INTO cliententreprise(idClient) VALUES (?)";
-				PreparedStatement ps5 = conn.prepareStatement(s5);
-				ps5.setInt(1, idClient);
+				String s6= "INSERT INTO cliententreprise(idClient) VALUES (?)";
+				PreparedStatement ps6 = conn.prepareStatement(s6);
+				ps6.setInt(1, idCli);
+				ps6.executeUpdate();
 			}
 			
 		} catch (Exception e) {

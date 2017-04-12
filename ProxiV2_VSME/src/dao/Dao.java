@@ -314,11 +314,17 @@ public class Dao implements IDao {
 		int i=0;
 		try {
 			Connection conn= DaoConnection.getConnection();
-			PreparedStatement ps = conn.prepareStatement("SELECT COUNT (idClient)nombreClient FROM client WHERE idConseiller = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT COUNT(idClient)nombreClient FROM client WHERE idConseiller = ?");
 			ps.setInt(1, idcon);
 			ResultSet rs = ps.executeQuery();
+			if(rs.next())
+			{
+				i = rs.getInt("nombreClient");
+				System.out.println(i);
+				return i;
+			}
 			
-			i = rs.getInt("nombreClient");
+			
 			return i;
 			
 		

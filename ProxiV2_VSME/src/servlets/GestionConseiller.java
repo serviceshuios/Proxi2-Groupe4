@@ -56,7 +56,7 @@ public class GestionConseiller extends HttpServlet {
 		/**
 		 * contrôle authentification par session
 		 */
-		// si pas de session, on en initialise une toute neuve avc deux
+		// si pas de session, on en initialise une toute neuve avec deux
 		// attributs
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("login") == null || session.getAttribute("attemptsCount") == null) {
@@ -99,15 +99,17 @@ public class GestionConseiller extends HttpServlet {
 			request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 		}
 
+		if(request.getAttribute("action").equals("interfaceConseiller")){
 		/**
 		 * Ajouter un client
 		 */
 		if (request.getParameter("ajouterclient") != null) {
-			// initialisation parametre de controle saisie
-			boolean validform = true;
-
+			
 			// si appui sur le bouton de validation formulaire
 			if (request.getParameter("validerajouterclient") != null) {
+				
+				// initialisation paramètre de controle saisie
+				boolean validform = true;
 
 				// vérification formulaire
 				if (request.getParameter("nom") == null || request.getParameter("nom").equals("")) {
@@ -163,7 +165,8 @@ public class GestionConseiller extends HttpServlet {
 							e.printStackTrace();
 						} catch (LeConseillerADeja10Clients e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							request.setAttribute("resultatvalidation", "vous avez atteint votre maximum de clients");
+							request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 						}
 					} else {
 						ClientEntreprise c = new ClientEntreprise();
@@ -201,65 +204,79 @@ public class GestionConseiller extends HttpServlet {
 		 * Modifier un client
 		 */
 		if (request.getParameter("modifierclient") != null) {
-			// initialisation parametre de controle saisie
-			boolean validform = true;
+			// si un client a bien été renseigné
+			if (request.getParameter("idclientform") != null) {
+				// initialisation parametre de controle saisie
+				boolean validform = true;
 
-			// si appui sur le bouton de validation formulaire
-			if (request.getParameter("validerModifierclient") != null) {
+				// si appui sur le bouton de validation formulaire
+				if (request.getParameter("validerModifierclient") != null) {
 
-				// vérification formulaire
-				if (request.getParameter("nom") == null || request.getParameter("nom").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("prenom") == null || request.getParameter("prenom").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("email") == null || request.getParameter("email").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("telephone") == null || request.getParameter("telephone").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("adresse") == null || request.getParameter("adresse").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("codepostal") == null || request.getParameter("codepostal").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("ville") == null || request.getParameter("ville").equals("")) {
-					validform = false;
-				}
-				if (request.getParameter("typeclient") == null || request.getParameter("typeclient").equals("")) {
-					validform = false;
-				}
-
-				// si une erreur de formulaire, on renvoie sur le formulaire
-				if (validform == false) {
-					request.setAttribute("validerModifierclientdefaut", "pb");
-					request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
-				} else {
-					// sinon en envoie le tout en base de données
-					IConseiller ic = new Services();
-					int idclientform = Integer.parseInt(request.getParameter("typeclient").toString());
-					Collection<Client> colcli = ic
-							.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
-					for (Client client : colcli) {
-						if (client.getIdClient() == idclientform) {
-							Adresse adr = new Adresse();
-							adr.setAdresse(request.getParameter("adresse"));
-							adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
-							adr.setVille(request.getParameter("ville"));
-							ic.modifierClient(client, request.getParameter("nom"), request.getParameter("prenom"), adr,
-									request.getParameter("email"));
-						}
+					// vérification formulaire
+					if (request.getParameter("nom") == null || request.getParameter("nom").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("prenom") == null || request.getParameter("prenom").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("email") == null || request.getParameter("email").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("telephone") == null || request.getParameter("telephone").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("adresse") == null || request.getParameter("adresse").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("codepostal") == null || request.getParameter("codepostal").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("ville") == null || request.getParameter("ville").equals("")) {
+						validform = false;
+					}
+					if (request.getParameter("idclientform") == null || request.getParameter("idclientform").equals("")) {
+						validform = false;
 					}
 
-					request.setAttribute("resultatvalidation", "client modifié");
-					request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+					// si une erreur de formulaire, on renvoie sur le formulaire
+					if (validform == false) {
+						request.setAttribute("validerModifierclientdefaut", "pb");
+						request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
+					} else {
+						// sinon on envoie le tout en base de données
+						IConseiller ic = new Services();
+						int idclientform = Integer.parseInt(request.getParameter("idclientform").toString());
+						Collection<Client> colcli = ic
+								.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
+						for (Client client : colcli) {
+							if (client.getIdClient() == idclientform) {
+								Adresse adr = new Adresse();
+								adr.setAdresse(request.getParameter("adresse"));
+								adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
+								adr.setVille(request.getParameter("ville"));
+								ic.modifierClient(client, request.getParameter("nom"), request.getParameter("prenom"),
+										adr, request.getParameter("email"));
+							}
+						}
+						request.setAttribute("resultatvalidation", "client modifié");
+						request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+					}
 				}
+				// par défaut, on envoie sur le formulaire avec le client
+				IConseiller ic = new Services();
+				int idclientform = Integer.parseInt(request.getParameter("idclientform").toString());
+				Collection<Client> colcli = ic
+						.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
+				for (Client client : colcli) {
+					if (client.getIdClient() == idclientform) {
+						request.setAttribute("client", client);
+						request.setAttribute("clientadresse", client.getSonAdresse());
+					}
+				}
+				request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
 			}
-			// par défaut, on envoie sur le formulaire
-			request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
+			request.setAttribute("resultatvalidation", "veuillez choisir un client dans la liste");
+			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 		}
 
 		/**
@@ -278,17 +295,11 @@ public class GestionConseiller extends HttpServlet {
 		/**
 		 * interface conseiller
 		 */
-		if (request.getParameter("action").equals("interfaceConseiller")) {
-			IConseiller ic = new Services();
-			Collection<Client> colcli = ic
-					.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
-			request.setAttribute("listeclients", colcli);
-			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+		IConseiller ic = new Services();
+		Collection<Client> colcli = ic.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
+		request.setAttribute("listeclients", colcli);
+		request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 		}
-
-		// dans tous les autre cas on redirige vers l'authentification
-		request.getRequestDispatcher("/Authenticate.jsp");
-
 		/*
 		 * if (request.getParameter("action").equals("ajouter")) { // 1 -
 		 * récupérer paramètres (du formulaire) String nom =

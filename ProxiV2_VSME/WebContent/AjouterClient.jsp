@@ -9,7 +9,7 @@
 </head>
 <body>
 	<h1>Ajouter client</h1>
-	<form method="post" action="GestionConseiller?action=AjouterClient">
+	<form method="post" action="GestionConseiller?action=interfaceConseiller">
 		<fieldset id="section-1">
 			<legend>Ajouter un client</legend>
 			<c:if test="${!empty requestScope.validerajouterclientdefaut}">

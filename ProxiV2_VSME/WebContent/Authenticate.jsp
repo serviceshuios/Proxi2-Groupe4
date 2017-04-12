@@ -28,10 +28,11 @@
 						type="text" name="id" id="id" /><br /> <label for="pwd">saisir
 						votre mot de passe :</label> <input type="password" name="pwd" id="pwd" /><br />
 				</fieldset>
-				<input type="submit" value="valider" /><br />
+				<input type="submit" name="validauthenticate" value="valider" /><br />
 			</form>
 		</c:otherwise>
 	</c:choose>
+	<a href="index.html">retour accueil</a>
 
 </body>
 </html>

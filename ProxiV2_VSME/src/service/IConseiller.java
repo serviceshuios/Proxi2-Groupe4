@@ -1,5 +1,6 @@
 package service;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 import metier.Adresse;
@@ -28,7 +29,7 @@ import service.exception.MontantSuperieurAuSoldeException;
 
 public interface IConseiller {
 	
-
+	public Collection<Client> recuperationClient(int idCli) throws SQLException;
 	public int authentificationConseiller(String login, String pwd);
 	
 	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients;
@@ -40,7 +41,7 @@ public interface IConseiller {
 	public void activationCarteVisa(Compte c, CarteBancaire cv);
 	public void desactivationCarteVisa(Compte c, CarteBancaire cv);
 	
-	
+	public int compterNombreClient(int idcon);
 	
 	public void ajouterCompteClient (Client c, Compte co) throws CompteEpargneExistantException, CompteCourantExistantException;
 	public void supprimerCompteClient (Compte compte, Client c) throws AbsenceDeCompteEpargneException, AbsenceDeCompteCourantException;

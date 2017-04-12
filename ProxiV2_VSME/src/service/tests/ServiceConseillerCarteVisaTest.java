@@ -1,6 +1,7 @@
 package service.tests;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import metier.CarteBancaire;
@@ -12,7 +13,9 @@ public class ServiceConseillerCarteVisaTest {
 
 	//Test d'Activation d'une carte visa. Association d'une carte à un compte
 	
+	
 	@Test
+	@Ignore
 	public void testActivationCarteVisa() {
 		IConseiller sc = new Services(); // Initiation d'un service
 		
@@ -37,6 +40,7 @@ public class ServiceConseillerCarteVisaTest {
 
 	
 	//Test de désactivation d'une carte
+	@Ignore
 	@Test
 	public void testDesactivationCarteVisa() {
 		

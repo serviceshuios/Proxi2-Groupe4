@@ -36,6 +36,16 @@ public class Services implements IConseiller, IGerant {
 			super();
 		}
 	
+	public int compterNombreClient(int idcon)
+	{
+		return idao.compterNombreClient(idcon);
+	}
+	
+	public Collection<Client> recuperationClient(int idCli) throws SQLException
+	{
+		return idao.recuperationClient(idCli);
+	}
+	
 	/**
 	 * Authentification du conseiller
 	 */
@@ -149,11 +159,11 @@ public class Services implements IConseiller, IGerant {
 		if(idao.compterNombreClient(idcon)<10)
 				{ 
 		
-			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
+			//if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
 		
 				idao.ajouterClient(idcon, c);
 				
-			}
+			//}
 			
 		} else{
 			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");

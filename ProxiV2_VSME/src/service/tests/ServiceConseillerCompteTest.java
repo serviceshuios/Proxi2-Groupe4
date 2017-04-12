@@ -21,7 +21,7 @@ import service.exception.CompteEpargneExistantException;
 public class ServiceConseillerCompteTest {
 
 		//Test d'ajout d'un compte à un client
-	
+	@Ignore
 	@Test
 	public void testAjouterCompteEpargneClient() {
 		IConseiller sc = new Services(); //Création d'un service
@@ -52,7 +52,7 @@ public class ServiceConseillerCompteTest {
 	}
 	
 	//Test Ajouter Compte Epargne dans le cas où le client à déjà un compte Epargne
-	
+	@Ignore
 	@Test
 	public void testAjouterCompteEpargneClient2() {
 		IConseiller sc = new Services(); //Création d'un service
@@ -94,6 +94,7 @@ public class ServiceConseillerCompteTest {
 	
 	// Test identique au testAjouterCompteEpargneClient avec un Compte Courant
 	
+	@Ignore
 	@Test
 	public void testAjouterCompteCourantClient() {
 		IConseiller sc = new Services();
@@ -122,6 +123,7 @@ public class ServiceConseillerCompteTest {
 	}
 	
 	//Test Ajouter Compte Courant dans le cas où le client à déjà un compte Courant
+	@Ignore
 	@Test
 	public void testAjouterCompteCourantClient2() {
 		IConseiller sc = new Services();
@@ -162,6 +164,7 @@ public class ServiceConseillerCompteTest {
 	}
 	
 	//Test de la suppression de l'association d'un compte Epargne à un client	
+	@Ignore
 	@Test
 	public void testSupprimerCompteEpargneClient() {
 		
@@ -194,6 +197,7 @@ public class ServiceConseillerCompteTest {
 	}
 	
 	//Test de la suppression de l'association d'un compte courant à un client	
+	@Ignore
 	@Test
 	public void testSupprimerCompteCourantClient() {
 		

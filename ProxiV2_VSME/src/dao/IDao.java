@@ -56,11 +56,12 @@ public interface IDao {
 	public void ajouterConseiller(int idge, Conseiller co);
 	public void supprimerConseiller(Conseiller c, int idge);
 	public void listerConseiller(int idge);
-	void modifierConseiller(Conseiller c, Adresse a, String telephone);
-	int recuperationidAdresse(Adresse a) throws SQLException;
-	int recuperationidClient(int idPersonne) throws SQLException;
-	int recuperationidPersonne(Client c) throws SQLException;
-	String recuperationTypeCompte(Compte c) throws SQLException;
+	public void modifierConseiller(Conseiller c, Adresse a, String telephone);
+	public int recuperationidAdresse(Adresse a) throws SQLException;
+	public int recuperationidClient(int idPersonne) throws SQLException;
+	public int recuperationidPersonne(Client c) throws SQLException;
+	public String recuperationTypeCompte(Compte c) throws SQLException;
+	public Collection<Client> recuperationClient(int idCli) throws SQLException;
 	
 	
 }

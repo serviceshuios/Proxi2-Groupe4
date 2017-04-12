@@ -1,6 +1,7 @@
 package service.tests;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import service.IConseiller;
@@ -10,6 +11,7 @@ import service.exception.MontantNegatifException;
 public class ServiceConseillerSimulationTest {
 
 	// Test d'une simulation d'un crédit
+	@Ignore
 	@Test
 	public void testEffectuerSimulationCredit() throws MontantNegatifException {
 		IConseiller sc = new Services(); //Création d'un service
@@ -25,6 +27,7 @@ public class ServiceConseillerSimulationTest {
 		
 	}
 	
+	@Ignore
 	@Test//cas montant negatif
 	public void testEffectuerSimulationCredit2() throws MontantNegatifException {
 		IConseiller  sc = new Services();

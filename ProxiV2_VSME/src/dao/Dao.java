@@ -510,6 +510,31 @@ public class Dao implements IDao {
 	}
 	
 	
+	/**
+	 * méthode de récupération d'un client à partir de son idClient
+	 */
+	@Override
+	public Collection<Client> recuperationClient(int idCli)throws SQLException{
+		
+		Collection<Client> cl = new ArrayList<Client>();
+		Connection conn= DaoConnection.getConnection();
+			String selection = "SELECT nom, prenom, email, adresse, codepostale, ville FROM client, personne, adresse WHERE adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient AND personne.idClient = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setInt(1, idCli);
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				Adresse a1 = new Adresse(rs1.getString("adresse"), rs1.getInt("codePostale"), rs1.getString("ville"));
+				Client c1= new Client ();
+				c1.setNom(rs1.getString("nom"));
+				c1.setPrenom(rs1.getString("prenom"));
+				c1.setSonAdresse(a1);
+				c1.setEmail(rs1.getString("email"));
+				cl.add(c1);
+		}
+		return cl;
+	}
+	
 	
 	
 	@Override

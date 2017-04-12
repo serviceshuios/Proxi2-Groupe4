@@ -10,7 +10,51 @@
 <title>Interface Conseiller</title>
 </head>
 <body>
+<<<<<<< HEAD
 	<section class="row">
+=======
+	<H1>Interface Conseiller</H1>
+	<c:out value="${sessionScope.login}"></c:out>
+	<br />
+	<a href="GestionConseiller?action=Deconnection">Déconnection</a>
+	<br />
+	<c:out value="${requestScope.resultatvalidation}"></c:out>
+	<br />
+
+	<form method="post"
+		action="GestionConseiller?action=interfaceConseiller">
+		<input type="submit" name="ajouterclient" value="ajouter un client" /><br />
+
+		<table>
+			<tr>
+				<th>&nbsp;</th>
+				<th>id</th>
+				<th>type de Client</th>
+				<th>nom</th>
+				<th>prenom</th>
+				<th>email</th>
+
+			</tr>
+			<c:forEach var="cli" items="${listeclients}">
+				<tr>
+					<td><input type="radio" name="idclientform" id="idclientform"
+						value="<c:out value="${cli.idClient}"></</c:out>" /></td>
+					<td><c:out value="${cli.idClient}"></</c:out></td>
+					<td><c:out value="${cli.typeClient}"></</c:out></td>
+					<td><c:out value="${cli.nom}"></</c:out></td>
+					<td><c:out value="${cli.prenom}"></</c:out></td>
+					<td><c:out value="${cli.email}"></</c:out></td>
+
+				</tr>
+			</c:forEach>
+		</table>
+		<input type="submit" name="modifierclient" value="modifier un client" /><br />
+		<input type="submit" name="voircomptesclient"
+			value="voir comptes client" /><br /> <input type="submit"
+			name="effectuervirement" value="effectuer virement" /><br />
+	</form>
+
+>>>>>>> branch 'master' of https://github.com/serviceshuios/Proxi2-Groupe4.git
 
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<h1>ProxiBanqueV2</h1>

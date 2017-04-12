@@ -10,13 +10,14 @@
 <body>
 
 	<c:if test="${sessionScope.attemptsCount > 0}">
+		Echec authentification conseiller<br />
 		Attention déjà 
 		<c:out value="${sessionScope.attemptsCount}"></c:out>
-		tentatives de connections<br />
+		tentative(s) de connections<br />
 	</c:if>
 
 	<c:choose>
-		<c:when test="${sessionScope.attemptsCount > 99}">
+		<c:when test="${sessionScope.attemptsCount > 3}">
 			Trop de tentatives, veuillez réessayer plus tard<br />
 		</c:when>
 		<c:otherwise>

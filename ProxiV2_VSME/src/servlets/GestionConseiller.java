@@ -102,7 +102,7 @@ public class GestionConseiller extends HttpServlet {
 		if (request.getParameter("action").equals("interfaceConseiller")) {
 
 			/**
-			 * interface conseiller
+			 * listes clients pour l'interface conseiller
 			 */
 			IConseiller ic1 = new Services();
 			Collection<Client> colcli1 = ic1
@@ -178,7 +178,7 @@ public class GestionConseiller extends HttpServlet {
 										"vous avez atteint votre maximum de clients");
 								request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 							}
-						} else {
+						} else if(request.getParameter("typeclient").equals("entreprise")) {
 							ClientEntreprise c = new ClientEntreprise();
 							c.setNom(request.getParameter("nom"));
 							c.setPrenom(request.getParameter("prenom"));

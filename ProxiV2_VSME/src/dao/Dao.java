@@ -342,7 +342,6 @@ public class Dao implements IDao {
 			if(rs.next())
 			{
 				i = rs.getInt("nombreClient");
-				System.out.println(i);
 				return i;
 			}
 			
@@ -448,9 +447,9 @@ public class Dao implements IDao {
 			
 			//récupération de l'idClient de la table client et de l'idAdresse de la table adresse qui correspondent au client que l'on ajoute
 			int idCli = idao.recuperationidClient(idPersonne);
-			System.out.println(idCli);
+		
 			int idAdresse = idao.recuperationidAdresse(a1);
-			System.out.println(idAdresse);
+		
 			
 			//requete sql pour mettre a jour la table personne afin de relier la personne à son adresse et à la table client
 			String s4= "UPDATE personne SET idClient =?, idAdresse = ? WHERE id = ? ";

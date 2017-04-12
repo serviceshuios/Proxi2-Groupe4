@@ -99,7 +99,7 @@ public class GestionConseiller extends HttpServlet {
 			request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 		}
 
-		if(request.getAttribute("action").equals("interfaceConseiller")){
+		if(request.getParameter("action").equals("interfaceConseiller")){
 		/**
 		 * Ajouter un client
 		 */

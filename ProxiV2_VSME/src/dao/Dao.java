@@ -26,14 +26,18 @@ import service.exception.MontantSuperieurAuSoldeException;
 
 public class Dao implements IDao {
 	
-	
+	/**
+	 * Methode d'authentification du conseiller (vérification du mot de passe en fonction du login)
+	 * 
+	 */
+	//la méthode renvoie l'id du conseiller si le mot de passe est associé au login  et renvoie 0 si il n'est pas associé
 	@Override
-	public boolean authentificationConseiller(String login, String pwd) {
+	public int authentificationConseiller(String login, String pwd) {
 		
-		boolean b = false;
+		int id = 0;
 		try {
 		Connection conn= DaoConnection.getConnection();
-		PreparedStatement ps = conn.prepareStatement("SELECT pwd FROM connectionconseiller WHERE login = ?");
+		PreparedStatement ps = conn.prepareStatement("SELECT pwd, idConseiller FROM connectionconseiller WHERE login = ?");
 		
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
@@ -41,10 +45,11 @@ public class Dao implements IDao {
 		
 		if (rs.next())
 		{
+			
 			String password = rs.getString("pwd");
 			if(password.equals(pwd))
 			{
-			b=true;
+			id=rs.getInt("idConseiller");
 			}
 		}
 		} catch (Exception e) {
@@ -52,20 +57,25 @@ public class Dao implements IDao {
 			e.printStackTrace();
 		}
 		DaoConnection.closeConnection();
-		return b;
+		return id;
 		
 	}
+	
+	
+	
 
 	
-	
+	/**
+	 * Methode pour lister les clients d'un conseillé 
+	 */
 	@Override
-	public Collection<Client> listerClient(Conseiller co) {
+	public Collection<Client> listerClient(int idcon) {
 		
 		Collection<Client> cl = new ArrayList<Client>();
 		try {
 			Connection conn= DaoConnection.getConnection();
 			PreparedStatement ps = conn.prepareStatement("SELECT client.idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse, conseiller WHERE conseiller.idConseiller=client.idConseiller AND adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient and conseiller.idConseiller=? ");
-			ps.setInt(1, co.getIdConseiller());
+			ps.setInt(1, idcon);
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next())
@@ -91,6 +101,11 @@ public class Dao implements IDao {
 		
 	}
 	
+	
+	/**
+	 * Methode pour récupérer l'idAdresse d'un client grace à son idClient
+	 */
+	@Override
 	public int recuperationidAdresse(Client c) throws SQLException{
 		Connection conn= DaoConnection.getConnection();
 		int id=0;
@@ -108,9 +123,30 @@ public class Dao implements IDao {
 	
 	
 	@Override
+	public int recuperationidAdresse(Adresse a) throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT idadresse FROM adresse WHERE adresse = ? AND code postale = ? AND  ville = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setString(1, a.getAdresse());
+			psselection.setInt(2, a.getCodePostale());
+			psselection.setString(3, a.getVille());
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idadresse");
+				return id;
+		}
+		return id;
+	}
+	
+	/**
+	 * Methode de modification d'un client en Base de données
+	 */
+	@Override
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) {
 		try {
-			Dao dao = new Dao();
+			IDao idao = new Dao();
 			
 			Connection conn= DaoConnection.getConnection();
 			String s= "UPDATE personne SET nom = ?, prenom = ? , email = ?  WHERE personne.idClient = ? ";
@@ -121,7 +157,7 @@ public class Dao implements IDao {
 			ps.setInt(4, c.getIdClient());
 			ps.executeUpdate();
 			
-			int id = dao.recuperationidAdresse(c);
+			int id = idao.recuperationidAdresse(c);
 			
 			String s2= "UPDATE adresse SET adresse = ? ,codePostale = ? , ville = ?  WHERE idAdresse = ?";
 			PreparedStatement ps2 = conn.prepareStatement(s2);
@@ -139,7 +175,9 @@ public class Dao implements IDao {
 		
 	}
 	
-	
+	/**
+	 * Methode pour lister les comptes d'un client
+	 */
 	@Override
 	public Collection<Compte> listerCompteClient (Client c) {
 		
@@ -203,6 +241,7 @@ public class Dao implements IDao {
 		return cl;
 	}
 	
+	@Override
 	public double recuperationSolde(Compte c1) throws SQLException{
 		Connection conn= DaoConnection.getConnection();
 		double solde1=0;
@@ -224,10 +263,10 @@ public class Dao implements IDao {
 			throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
 				try {
 					Connection conn= DaoConnection.getConnection();
-					Dao dao = new Dao();
+					IDao idao = new Dao();
 					
-					double solde1= dao.recuperationSolde(c1);
-					double solde2=dao.recuperationSolde(c2);
+					double solde1= idao.recuperationSolde(c1);
+					double solde2=idao.recuperationSolde(c2);
 					
 					String s= "UPDATE compte SET solde = ? WHERE idCompte = ? ";
 					PreparedStatement ps = conn.prepareStatement(s);
@@ -250,13 +289,13 @@ public class Dao implements IDao {
 	}
 	
 	@Override
-	public int compterNombreClient(Conseiller co)
+	public int compterNombreClient(int idcon)
 	{
 		int i=0;
 		try {
 			Connection conn= DaoConnection.getConnection();
 			PreparedStatement ps = conn.prepareStatement("SELECT COUNT (idClient)nombreClient FROM client WHERE idConseiller = ?");
-			ps.setInt(1, co.getIdConseiller());
+			ps.setInt(1, idcon);
 			ResultSet rs = ps.executeQuery();
 			
 			i = rs.getInt("nombreClient");
@@ -273,22 +312,34 @@ public class Dao implements IDao {
 	}
 	
 	
+	@Override
+	public int recuperationidClient(Client c) throws SQLException{
+		Connection conn= DaoConnection.getConnection();
+		int id=0;
+			String selection = "SELECT idclient FROM personne WHERE nom = ? AND prenom = ? AND  email = ?";
+			PreparedStatement psselection = conn.prepareStatement(selection);
+			psselection.setString(1, c.getNom());
+			psselection.setString(2, c.getPrenom());
+			psselection.setString(3, c.getEmail());
+			ResultSet rs1 = psselection.executeQuery();
+			if(rs1.next())
+		{
+				id = rs1.getInt("idadresse");
+				return id;
+		}
+		return id;
+	}
+	
+	
 	
 	@Override
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
+	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		try {
 			Connection conn= DaoConnection.getConnection();
 			String s= "INSERT INTO client(typeClient,idConseiller) VALUES (?,?)";
 			PreparedStatement ps = conn.prepareStatement(s);
 			ps.setString(1, c.getTypeClient());
-			ps.setInt(2, co.getIdConseiller());
-			String s2= "INSERT INTO personne(nom, prenom, telephone, email) VALUES (?,?,?,?)";
-			PreparedStatement ps2 = conn.prepareStatement(s2);
-			ps2.setString(1, c.getNom());
-			ps2.setString(2, c.getPrenom());
-			ps2.setString(3, c.getTelephone());
-			ps2.setString(4, c.getEmail());
-			ps2.setInt(5, c.getIdClient());
+			ps.setInt(2, idcon);
 			String s3 = "INSERT INTO adresse(adresse, codePostale, ville) VALUES (?,?,?)";
 			PreparedStatement ps3 = conn.prepareStatement(s3);
 			Adresse a1 = new Adresse();
@@ -296,6 +347,20 @@ public class Dao implements IDao {
 			ps3.setString(1, a1.getAdresse());
 			ps3.setInt(2, a1.getCodePostale());
 			ps3.setString(3, a1.getVille());
+			String s2= "INSERT INTO personne(nom, prenom, telephone, email, idClient, idAdresse) VALUES (?,?,?,?,?,?)";
+			PreparedStatement ps2 = conn.prepareStatement(s2);
+			ps2.setString(1, c.getNom());
+			ps2.setString(2, c.getPrenom());
+			ps2.setString(3, c.getTelephone());
+			ps2.setString(4, c.getEmail());
+			
+			IDao idao = new Dao();
+			
+			int idClient = idao.recuperationidClient(c);
+			ps2.setInt(5, idClient);
+			
+			int idAdresse = idao.recuperationidAdresse(c.getSonAdresse());
+			ps2.setInt(6, idAdresse);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -317,7 +382,7 @@ public class Dao implements IDao {
 	}
 
 	@Override
-	public void ajouterConseiller(Gerant g, Conseiller co) {
+	public void ajouterConseiller(int idge, Conseiller co) {
 		
 
 	}
@@ -325,13 +390,13 @@ public class Dao implements IDao {
 	
 
 	@Override
-	public void supprimerConseiller(Conseiller c, Gerant g) {
+	public void supprimerConseiller(Conseiller c, int idge) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void afficherConseiller(Conseiller c) {
+	public void listerConseiller(int idge) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -347,7 +412,7 @@ public class Dao implements IDao {
 	
 
 	@Override
-	public void supprimerClient(Client c, Conseiller co) {
+	public void supprimerClient(Client c, int idcon) {
 		// TODO Auto-generated method stub
 		
 	}

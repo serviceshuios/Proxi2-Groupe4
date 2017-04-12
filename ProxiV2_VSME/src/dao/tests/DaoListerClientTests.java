@@ -24,9 +24,9 @@ public class DaoListerClientTests {
 		IDao idao = new Dao();
 		
 		Conseiller co = new Conseiller();
-		co.setIdConseiller(1);//Conseiller dont l'idConseiller est de 1 : il a 10 clients en BDD
+		int idcon = 1;//Conseiller dont l'idConseiller est de 1 : il a 10 clients en BDD
 		
-		Collection<Client> col1 = idao.listerClient(co); //Collection de clients particulier pour un conseiller
+		Collection<Client> col1 = idao.listerClient(idcon); //Collection de clients particulier pour un conseiller
 		
 		Assert.assertEquals(10, col1.size()); //Regarde si la taille de la collection du conseiller 1 est bien égale à 10
 		

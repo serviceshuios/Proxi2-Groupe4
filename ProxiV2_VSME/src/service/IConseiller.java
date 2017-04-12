@@ -29,12 +29,12 @@ import service.exception.MontantSuperieurAuSoldeException;
 public interface IConseiller {
 	
 
-	public boolean authentificationConseiller(String login, String pwd);
+	public int authentificationConseiller(String login, String pwd);
 	
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients;
+	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients;
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email);
-	public void supprimerClient(Client c, Conseiller co);
-	public Collection<Client> listerClient(Conseiller co);
+	public void supprimerClient(Client c, int idcon);
+	public Collection<Client> listerClient(int idcon);
 	public Collection<Client> listerClient(String motcle);
 	
 	public void activationCarteVisa(Compte c, CarteBancaire cv);

@@ -21,9 +21,9 @@ public class DaoAuthentificationTests {
 		String login = "bourne";
 		String pwd = "bourne";
 		
-		boolean b = idao.authentificationConseiller(login, pwd);
+		int id = idao.authentificationConseiller(login, pwd);
 		
-		Assert.assertEquals(true, b);
+		Assert.assertEquals(2, id);
 	}
 
 	
@@ -37,9 +37,9 @@ public class DaoAuthentificationTests {
 		String login = "bourne";
 		String pwd = "bourn";
 		
-		boolean b = idao.authentificationConseiller(login, pwd);
+		int id = idao.authentificationConseiller(login, pwd);
 		
-		Assert.assertEquals(false, b);
+		Assert.assertEquals(0, id);
 	}
 	
 	/**
@@ -52,9 +52,9 @@ public class DaoAuthentificationTests {
 		String login = "bourn";
 		String pwd = "bourne";
 		
-		boolean b = idao.authentificationConseiller(login, pwd);
+		int id = idao.authentificationConseiller(login, pwd);
 		
-		Assert.assertEquals(false, b);
+		Assert.assertEquals(0, id);
 	}
 	
 	

@@ -39,7 +39,7 @@ public class Services implements IConseiller, IGerant {
 	 * Authentification du conseiller
 	 */
 	@Override
-	public boolean authentificationConseiller(String login, String pwd) 
+	public int authentificationConseiller(String login, String pwd) 
 		{
 			return idao.authentificationConseiller(login,pwd);
 		}
@@ -49,9 +49,9 @@ public class Services implements IConseiller, IGerant {
 	 * Lister les clients d'un conseiller
 	 */
 	@Override
-	public Collection<Client> listerClient(Conseiller co) 
+	public Collection<Client> listerClient(int idcon) 
 		{
-			return idao.listerClient(co);
+			return idao.listerClient(idcon);
 		}
 	
 	
@@ -134,16 +134,16 @@ public class Services implements IConseiller, IGerant {
 
 	
 	@Override
-	public void ajouterClient(Conseiller co, Client c) throws LeConseillerADeja10Clients {
+	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		
-		if(idao.compterNombreClient(co)<10)
+		if(idao.compterNombreClient(idcon)<10)
 				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
 			IConseiller cs = new Services();
 			creerClient(c);
 			
 			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
 		
-				idao.ajouterClient(co, c);
+				idao.ajouterClient(idcon, c);
 				
 			}
 			
@@ -168,9 +168,9 @@ public class Services implements IConseiller, IGerant {
 	 * Ajout d'un conseiller par un gérant
 	 */
 	@Override
-	public void ajouterConseiller(Gerant g, Conseiller co) 
+	public void ajouterConseiller(int idge, Conseiller co) 
 		{
-		idao.ajouterConseiller(g, co);
+		idao.ajouterConseiller(idge, co);
 			
 			/*Collection<Conseiller> col = g.getConseillers(); // Récupère la liste des conseillers du gérant
 			col.add(co); //Ajoute le Conseiller co à la liste col
@@ -197,12 +197,15 @@ public class Services implements IConseiller, IGerant {
 	 * Suppression d'un conseiller par un gérant
 	 */
 		@Override
-		public void supprimerConseiller(Conseiller c, Gerant g) {
-
+		public void supprimerConseiller(Conseiller c, int idge) {
+			
+			idao.supprimerConseiller(c, idge);
 		
+			/*
 			Collection<Conseiller> col1 = g.getConseillers(); //Récupère la liste des conseillers du gérant
 			col1.remove(c); //supprimer le conseiller c
 			g.setConseillers(col1); //Associe la nouvelle liste au gérant
+			*/
 		
 			
 		}
@@ -211,8 +214,8 @@ public class Services implements IConseiller, IGerant {
 	 */
 
 		@Override
-		public void afficherConseiller(Conseiller c) {
-			idao.afficherConseiller(c);
+		public void listerConseiller(int idge) {
+			idao.listerConseiller(idge);
 		}
 	
 	
@@ -379,8 +382,8 @@ public class Services implements IConseiller, IGerant {
 	 */
 
 		@Override
-		public void supprimerClient(Client c, Conseiller co) {
-			idao.supprimerClient(c, co);
+		public void supprimerClient(Client c, int idcon) {
+			idao.supprimerClient(c, idcon);
 			/*
 			Collection<Client> col = co.getClients(); //Récupération de la liste des clients du conseiller dans la collection col
 			col.remove(c);	//Suppression du client de la collection

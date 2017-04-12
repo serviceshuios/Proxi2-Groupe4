@@ -37,7 +37,7 @@ public class ServiceConseillerClientTest {
 		Conseiller conseiller2 = new Conseiller(); //Créer un 2eme conseiller
 		Client client2 = new Client("Toto","Titi","0606060606",001,a1,"particulier"); //Création d'un client particulier 2 identique au client 1
 		try {
-			sc.AjouterClient(conseiller2, client2);
+			sc.ajouterClient(conseiller2, client2);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,7 +63,7 @@ public class ServiceConseillerClientTest {
 		Conseiller conseiller2 = new Conseiller();
 		Client client2 = new Client("Toto","Titi","0606060606",001,a1,"entreprise");
 		try {
-			sc.AjouterClient(conseiller2, client2);
+			sc.ajouterClient(conseiller2, client2);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,14 +153,14 @@ public class ServiceConseillerClientTest {
 		Client c11 = new Client ("POPO","popo","0606050505",657,a11,"particulier");
 	
 		try {
-			sc.AjouterClient(conseiller2, c11);
+			sc.ajouterClient(conseiller2, c11);
 		} catch (LeConseillerADeja10Clients e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		
-		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()))
+		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()));
 		}
 		
 	
@@ -177,9 +177,16 @@ public class ServiceConseillerClientTest {
 		Adresse a1 = new Adresse("rue A",69000,"Lyon");
 		c1.setSonAdresse(a1);
 		Adresse a2 = new Adresse("rue B",69001,"Villeurbanne"); //Création d'une nouvelle adresse
-		String telephone2 = "0707070707"; //Création d'un nouveau téléphone
-		Client c2 = new Client("Toto","Titi",telephone2,001,a2);		//Création client 2 qui egale au client 1 avec nouveau téléphone et nouvelle adresse
-		sc.ModifierClient(c1,a2,telephone2); //Appel la fonction ModifierClient
+		String nom = "A";
+		String prenom = "B";
+		String email = "toto.titi@gmail.com"; //Création d'un nouveau téléphone
+		Client c2 = new Client();//Création client 2 qui egale au client 1 avec nouveau téléphone et nouvelle adresse
+		c2.setNom("A");
+		c2.setPrenom("B");
+		c2.setSonAdresse(a2);
+		c2.setEmail("toto.titi@gmail.com");
+		
+		sc.modifierClient(c1, nom, prenom,a2,email); //Appel la fonction ModifierClient
 		Assert.assertEquals(true, (c1.getSonAdresse()==c2.getSonAdresse() && c1.getTelephone() == c2.getTelephone())); //Vérifier de la modification de l'adresse et le téléphone
 	}
 	
@@ -187,7 +194,7 @@ public class ServiceConseillerClientTest {
 	@Test
 	public void testSupprimerClientParticulier() {
 		
-		IConseiller ge = new ServiceConseiller();	//Création d'un service
+		IConseiller ge = new Services();	//Création d'un service
 		Conseiller conseiller1=new Conseiller();	// Création d'un conseiller
 		Adresse a1 = new Adresse("rue A",69000,"Lyon");
 		Client c1 = new Client("Toto","Titi","0606060606",001,a1,"particulier");	//Création et instanciation d'un client Particulier
@@ -206,7 +213,7 @@ public class ServiceConseillerClientTest {
 		col2.add(c2);
 		conseiller2.setClients(col2);
 		c2.setConseiller(conseiller2);
-		ge.SupprimerClient(c2,conseiller2);	//Utilisation de la méthode SupprimerClient
+		ge.supprimerClient(c2,conseiller2);	//Utilisation de la méthode SupprimerClient
 		
 		//Test d'égalité de la tailler de la collection des client particuliers en conseiller 1 et 2
 		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()));
@@ -218,7 +225,7 @@ public class ServiceConseillerClientTest {
 	@Test
 	public void testSupprimerClientEntreprise() {
 		
-		ServiceConseiller ge = new ServiceConseiller();
+		IConseiller ge = new Services();
 		Conseiller conseiller1=new Conseiller();
 		Adresse a1 = new Adresse("rue A",69000,"Lyon");
 		Client c1 = new Client("Toto","Titi","0606060606",001,a1,"entreprise");
@@ -237,7 +244,7 @@ public class ServiceConseillerClientTest {
 		col2.add(c2);
 		conseiller2.setClients(col2);
 		c2.setConseiller(conseiller2);
-		ge.SupprimerClient(c2,conseiller2);
+		ge.supprimerClient(c2,conseiller2);
 		
 		
 		Assert.assertEquals(true, (conseiller1.getClients().size()==conseiller2.getClients().size()));

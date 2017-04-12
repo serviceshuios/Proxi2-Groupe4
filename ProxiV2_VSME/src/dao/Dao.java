@@ -72,7 +72,7 @@ public class Dao implements IDao {
 
 	
 	/**
-	 * Methode pour lister les clients d'un conseillé 
+	 * Methode pour lister les clients d'un conseillé à partir de l'id du conseiller
 	 */
 	@Override
 	public Collection<Client> listerClient(int idcon) {
@@ -159,7 +159,7 @@ public class Dao implements IDao {
 	}
 	
 	/**
-	 * Methode de modification d'un client en Base de données
+	 * Methode de modification d'un client (nom, prenom, email, adresse) en Base de données
 	 */
 	@Override
 	public void modifierClient(Client c, String nom, String prenom, Adresse a, String email) {
@@ -229,16 +229,24 @@ public class Dao implements IDao {
 		return co1;
 	}
 	
+	
+	/**
+	 * Methode pour lister les clients dont le nom contient le mot clé envoyé
+	 */
 	@Override
 	public Collection<Client> listerClient(String motcle){
 		
+		//Creation d'une collection de clients
 		Collection<Client> cl = new ArrayList<Client>();
 		try {
+			
+			//Requete sql pour trouver le nom, prenom, telephone, adresse, email, code postale, ville et type de client à partir d'un mot clé
 			Connection conn= DaoConnection.getConnection();
 			String s = "SELECT client.idClient, nom, prenom, telephone, email, adresse, codepostale, ville, typeClient FROM client, personne, adresse WHERE adresse.idAdresse=personne.idAdresse AND personne.idClient=client.idClient AND UPPER(personne.nom) LIKE UPPER('%" + motcle+ "%') ";
 			PreparedStatement ps = conn.prepareStatement(s);
 			ResultSet rs = ps.executeQuery();
 			
+			//Implémentation de la collection 
 			while(rs.next())
 					{
 						Adresse a1 = new Adresse(rs.getString("adresse"), rs.getInt("codePostale"), rs.getString("ville"));
@@ -257,10 +265,14 @@ public class Dao implements IDao {
 			e.printStackTrace();
 		}
 		DaoConnection.closeConnection();
-
+		//renvoie la collection de clients
 		return cl;
 	}
 	
+	
+	/**
+	 * Methode pour récuperer le solde d'un compte à partir de son idCompte 
+	 */
 	@Override
 	public double recuperationSolde(Compte c1) throws SQLException{
 		Connection conn= DaoConnection.getConnection();
@@ -277,23 +289,27 @@ public class Dao implements IDao {
 		return solde1;
 	}
 	
-	
+	/**
+	 * Methode pour effectuer un virement entre deux comptes
+	 */
 	@Override
 	public void effectuerVirement(int montant, Compte c1, Compte c2)
 			throws MontantNegatifException, MontantSuperieurAuSoldeException, DecouvertNonAutorise {
 				try {
 					Connection conn= DaoConnection.getConnection();
 					IDao idao = new Dao();
-					
+					//récupération du solde des deux comptes dans la base de données
 					double solde1= idao.recuperationSolde(c1);
 					double solde2=idao.recuperationSolde(c2);
 					
+					//Changer le solde du compte débiteur
 					String s= "UPDATE compte SET solde = ? WHERE idCompte = ? ";
 					PreparedStatement ps = conn.prepareStatement(s);
 					ps.setDouble(1, (solde1-montant));
 					ps.setLong(2, c1.getIdCompte());
 					ps.executeUpdate();
 					
+					//change le solde du compte crediteur
 					String s1= "UPDATE compte SET solde = ? WHERE idCompte = ? ";
 					PreparedStatement ps1 = conn.prepareStatement(s1);
 					ps1.setDouble(1, (solde2+montant));
@@ -308,12 +324,17 @@ public class Dao implements IDao {
 				
 	}
 	
+	
+	/**
+	 * Methode qui permet de compter le nombre de clients reliés à un conseiller
+	 */
 	@Override
 	public int compterNombreClient(int idcon)
 	{
 		int i=0;
 		try {
 			Connection conn= DaoConnection.getConnection();
+			//requete sql pour compter le nombre de client qui a pour idConseiller l'id du conseiller en question
 			PreparedStatement ps = conn.prepareStatement("SELECT COUNT(idClient)nombreClient FROM client WHERE idConseiller = ?");
 			ps.setInt(1, idcon);
 			ResultSet rs = ps.executeQuery();
@@ -324,7 +345,7 @@ public class Dao implements IDao {
 				return i;
 			}
 			
-			
+			//retourne le nombre de client du conseiller
 			return i;
 			
 		
@@ -338,6 +359,10 @@ public class Dao implements IDao {
 	}
 	
 	
+	
+	/**
+	 * Methode de récuperation de l'idClient de la table Client grace à l'id de la table personne
+	 */
 	@Override
 	public int recuperationidClient(int idPersonne) throws SQLException{
 		Connection conn= DaoConnection.getConnection();
@@ -355,6 +380,10 @@ public class Dao implements IDao {
 	}
 	
 	
+	
+	/**
+	 * méthode de récupération de l'id de la table personne grace aux coordonnées d'une client (nom, prenom, email)
+	 */
 	@Override
 	public int recuperationidPersonne(Client c)throws SQLException{
 		Connection conn= DaoConnection.getConnection();
@@ -373,10 +402,15 @@ public class Dao implements IDao {
 		return id;
 	}
 	
+	
+	/**
+	 * Methode pour ajouter un client en Base de donnees (tables personne, client et adresse)
+	 */
 	@Override
 	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		try {
 			Connection conn= DaoConnection.getConnection();
+			//requete sql qui permet de creer une personne (nom, prenom, telephone, email)
 			String s2= "INSERT INTO personne(nom, prenom, telephone, email) VALUES (?,?,?,?)";
 			PreparedStatement ps2 = conn.prepareStatement(s2);
 			ps2.setString(1, c.getNom());
@@ -386,10 +420,11 @@ public class Dao implements IDao {
 			ps2.executeUpdate();
 			
 			IDao idao = new Dao();
-			//recuperation idpersonne
+			//recuperation de idpersonne précédemment créée
 			int idPersonne = idao.recuperationidPersonne(c);
-			System.out.println(idPersonne);
 			
+			
+			//requete sql qui permet de creer un client (type de client, idconseiler et idpersonne(qui relie le client à la personne precedemment créée))
 			String s= "INSERT INTO client(typeClient, idConseiller,id) VALUES (?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(s);
 			ps.setString(1, c.getTypeClient());
@@ -399,7 +434,7 @@ public class Dao implements IDao {
 			
 			
 			
-			
+			// requete sql qui permet de crée une adresse dans la table adresse
 			String s3 = "INSERT INTO adresse(adresse, codePostale, ville) VALUES (?,?,?)";
 			PreparedStatement ps3 = conn.prepareStatement(s3);
 			Adresse a1 = new Adresse();
@@ -410,13 +445,13 @@ public class Dao implements IDao {
 			ps3.executeUpdate();
 			
 			
-			
+			//récupération de l'idClient de la table client et de l'idAdresse de la table adresse qui correspondent au client que l'on ajoute
 			int idCli = idao.recuperationidClient(idPersonne);
 			System.out.println(idCli);
 			int idAdresse = idao.recuperationidAdresse(a1);
 			System.out.println(idAdresse);
 			
-			
+			//requete sql pour mettre a jour la table personne afin de relier la personne à son adresse et à la table client
 			String s4= "UPDATE personne SET idClient =?, idAdresse = ? WHERE id = ? ";
 			PreparedStatement ps4= conn.prepareStatement(s4);
 			ps4.setInt(1, idCli);
@@ -424,7 +459,7 @@ public class Dao implements IDao {
 			ps4.setInt(3, idPersonne);
 			ps4.executeUpdate();
 			
-			
+			//ajout du client dans la table clientparticulier si c'est un client particulier
 			if(c instanceof ClientParticulier)
 			{
 				String s5= "INSERT INTO clientparticulier(idClient) VALUES (?)";
@@ -434,6 +469,7 @@ public class Dao implements IDao {
 				
 			}
 			
+			//ajout du client dans la table cliententreprise si c'est un client entreprise
 			if(c instanceof ClientEntreprise)
 			{
 				String s6= "INSERT INTO cliententreprise(idClient) VALUES (?)";
@@ -551,7 +587,6 @@ public class Dao implements IDao {
 		
 	}
 
-	
 
 	@Override
 	public double effectuerSimulationCredit(double montant, int taux, int duree) throws MontantNegatifException {

@@ -137,15 +137,13 @@ public class Services implements IConseiller, IGerant {
 	public void ajouterClient(int idcon, Client c) throws LeConseillerADeja10Clients {
 		
 		if(idao.compterNombreClient(idcon)<10)
-				{ // Addition du nbre de client entreprise et  nbre client particulier devant être inférieur à 10
-			IConseiller cs = new Services();
-			creerClient(c);
-			
-			if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
+				{ 
+		
+			//if(c instanceof ClientParticulier || c instanceof ClientEntreprise){ //Test si client entreprise ou particulier
 		
 				idao.ajouterClient(idcon, c);
 				
-			}
+			//}
 			
 		} else{
 			throw new LeConseillerADeja10Clients("Vous avez déjà 10 clients.");

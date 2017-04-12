@@ -19,8 +19,37 @@
 		<c:remove var="requestScope.resultatvalidation" />
 		<br />
 	</c:if>
-	<form method="post" action="GestionConseiller?action=AjouterClient">
+	<form method="post" action="GestionConseiller?action=InterfaceConseiller">
 		<input type="submit" name="ajouterclient" value="ajouter un client" /><br />
+</form>
+		<table>
+			<tr>
+				<th>&nbsp;</th>
+				<th>id</th>
+				<th>type de Client</th>
+				<th>nom</th>
+				<th>prenom</th>
+				<th>email</th>
+
+			</tr>
+			<c:forEach var="cli" items="${listeclients}">
+				<tr>
+					<td><input
+				type="radio" name="typeclient" id="entreprise"
+				value="<c:out value="${cli.idClient}"></</c:out>" /></td>
+					<td><c:out value="${cli.idClient}"></</c:out></td>
+					<td><c:out value="${cli.typeClient}"></</c:out></td>
+					<td><c:out value="${cli.nom}"></</c:out></td>
+					<td><c:out value="${cli.prenom}"></</c:out></td>
+					<td><c:out value="${cli.email}"></</c:out></td>
+
+
+				</tr>
+			</c:forEach>
+		</table>
+		<input type="submit" name="modifierclient" value="modifier un client" /><br />
+		<input type="submit" name="voircomptesclient" value="voir comptes client" /><br />
+		<input type="submit" name="effectuervirement" value="effectuer virement" /><br />
 	</form>
 
 

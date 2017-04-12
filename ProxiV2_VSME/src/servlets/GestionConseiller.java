@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,10 +53,9 @@ public class GestionConseiller extends HttpServlet {
 		// TODO Auto-generated method stub
 		request.setCharacterEncoding("utf-8");
 
-		// contrôle authentification par session
-
-		// !!!!!!!!!!!! faut ajouter l'id conseiller à la session !!!!!!!!!!!!
-
+		/**
+		 * contrôle authentification par session
+		 */
 		// si pas de session, on en initialise une toute neuve avc deux
 		// attributs
 		HttpSession session = request.getSession(false);
@@ -90,16 +90,19 @@ public class GestionConseiller extends HttpServlet {
 				request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 			}
 		}
-		// fin contrôle authentification
 
-		// déconnection
+		/**
+		 * déconnection
+		 */
 		if (request.getParameter("action").equals("Deconnection")) {
 			session.invalidate();
 			request.getRequestDispatcher("/Authenticate.jsp").forward(request, response);
 		}
 
-		// Ajouter un client
-		if (request.getParameter("action").equals("AjouterClient")) {
+		/**
+		 * Ajouter un client
+		 */
+		if (request.getParameter("ajouterclient") != null) {
 			// initialisation parametre de controle saisie
 			boolean validform = true;
 
@@ -108,37 +111,29 @@ public class GestionConseiller extends HttpServlet {
 
 				// vérification formulaire
 				if (request.getParameter("nom") == null || request.getParameter("nom").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("prenom") == null || request.getParameter("prenom").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("email") == null || request.getParameter("email").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("telephone") == null || request.getParameter("telephone").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("adresse") == null || request.getParameter("adresse").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("codepostal") == null || request.getParameter("codepostal").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("ville") == null || request.getParameter("ville").equals("")) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 				if (request.getParameter("typeclient") == null
 						|| (!request.getParameter("typeclient").equals("particulier")
 								&& !request.getParameter("typeclient").equals("entreprise"))) {
-					// request.setAttribute("validerajouterclientdefaut", pb);
 					validform = false;
 				}
 
@@ -148,38 +143,51 @@ public class GestionConseiller extends HttpServlet {
 					request.getRequestDispatcher("/AjouterClient.jsp").forward(request, response);
 				} else {
 					// sinon en envoie le tout en base de données
-					Client c = new Client();
-					c.setNom(request.getParameter("nom"));
-					c.setPrenom(request.getParameter("prenom"));
-					c.setEmail(request.getParameter("email"));
-					c.setTelephone(request.getParameter("telephone"));
-					Adresse adr = new Adresse();
-					adr.setAdresse(request.getParameter("adresse"));
-					adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
-					adr.setVille(request.getParameter("adresse"));
-					c.setSonAdresse(adr);
-					c.setTypeClient(request.getParameter("typeclient"));
-
-					switch (request.getParameter("typeclient")) {
-					case "clientparticulier":
-						c = (ClientParticulier) c;
-						break;
-					case "cliententreprise":
-						c = (ClientEntreprise) c;
-						break;
-					default:
-						break;
-					}
-
-					IConseiller ic = new Services();
-					try {
-						ic.ajouterClient(Integer.parseInt(session.getAttribute("idConseiller").toString()), c);
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (LeConseillerADeja10Clients e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if (request.getParameter("typeclient").equals("particulier")) {
+						ClientParticulier c = new ClientParticulier();
+						c.setNom(request.getParameter("nom"));
+						c.setPrenom(request.getParameter("prenom"));
+						c.setEmail(request.getParameter("email"));
+						c.setTelephone(request.getParameter("telephone"));
+						Adresse adr = new Adresse();
+						adr.setAdresse(request.getParameter("adresse"));
+						adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
+						adr.setVille(request.getParameter("ville"));
+						c.setSonAdresse(adr);
+						c.setTypeClient(request.getParameter("typeclient"));
+						IConseiller ic = new Services();
+						try {
+							ic.ajouterClient(Integer.parseInt(session.getAttribute("idConseiller").toString()), c);
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (LeConseillerADeja10Clients e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						ClientEntreprise c = new ClientEntreprise();
+						c.setNom(request.getParameter("nom"));
+						c.setPrenom(request.getParameter("prenom"));
+						c.setEmail(request.getParameter("email"));
+						c.setTelephone(request.getParameter("telephone"));
+						Adresse adr = new Adresse();
+						adr.setAdresse(request.getParameter("adresse"));
+						adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
+						adr.setVille(request.getParameter("ville"));
+						c.setSonAdresse(adr);
+						c.setTypeClient(request.getParameter("typeclient"));
+						IConseiller ic = new Services();
+						try {
+							ic.ajouterClient(Integer.parseInt(session.getAttribute("idConseiller").toString()), c);
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (LeConseillerADeja10Clients e) {
+							// TODO Auto-generated catch block
+							request.setAttribute("resultatvalidation", "vous avez atteint votre maximum de clients");
+							request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+						}
 					}
 					request.setAttribute("resultatvalidation", "Nouveau client ajouté");
 					request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
@@ -189,19 +197,77 @@ public class GestionConseiller extends HttpServlet {
 			request.getRequestDispatcher("/AjouterClient.jsp").forward(request, response);
 		}
 
-		// Modifier un client
-		if (request.getParameter("action").equals("ModifierClient"))
+		/**
+		 * Modifier un client
+		 */
+		if (request.getParameter("modifierclient") != null) {
+			// initialisation parametre de controle saisie
+			boolean validform = true;
 
-		{
-			IConseiller ic = new Services();
+			// si appui sur le bouton de validation formulaire
+			if (request.getParameter("validerModifierclient") != null) {
 
-			// ic.modifierClient(c, nom, prenom, a, email);;
+				// vérification formulaire
+				if (request.getParameter("nom") == null || request.getParameter("nom").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("prenom") == null || request.getParameter("prenom").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("email") == null || request.getParameter("email").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("telephone") == null || request.getParameter("telephone").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("adresse") == null || request.getParameter("adresse").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("codepostal") == null || request.getParameter("codepostal").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("ville") == null || request.getParameter("ville").equals("")) {
+					validform = false;
+				}
+				if (request.getParameter("typeclient") == null || request.getParameter("typeclient").equals("")) {
+					validform = false;
+				}
 
-			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+				// si une erreur de formulaire, on renvoie sur le formulaire
+				if (validform == false) {
+					request.setAttribute("validerModifierclientdefaut", "pb");
+					request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
+				} else {
+					// sinon en envoie le tout en base de données
+					IConseiller ic = new Services();
+					int idclientform = Integer.parseInt(request.getParameter("typeclient").toString());
+					Collection<Client> colcli = ic
+							.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
+					for (Client client : colcli) {
+						if (client.getIdClient() == idclientform) {
+							Adresse adr = new Adresse();
+							adr.setAdresse(request.getParameter("adresse"));
+							adr.setCodePostale((Integer.parseInt(request.getParameter("codepostal"))));
+							adr.setVille(request.getParameter("ville"));
+							ic.modifierClient(client, request.getParameter("nom"), request.getParameter("prenom"), adr,
+									request.getParameter("email"));
+						}
+					}
+
+					request.setAttribute("resultatvalidation", "client modifié");
+					request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
+				}
+			}
+			// par défaut, on envoie sur le formulaire
+			request.getRequestDispatcher("/ModifierClient.jsp").forward(request, response);
 		}
 
-		// Effectuer un virement
-		if (request.getParameter("action").equals("EffectuerVirement")) {
+		/**
+		 * Effectuer un virement
+		 */
+		if (request.getParameter("action").equals("EffectuerVirement"))
+
+		{
 			IConseiller ic = new Services();
 
 			// ic.effectuerVirement(montant, c1, c2);
@@ -209,10 +275,14 @@ public class GestionConseiller extends HttpServlet {
 			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 		}
 
-		// interface conseiller
+		/**
+		 * interface conseiller
+		 */
 		if (request.getParameter("action").equals("interfaceConseiller")) {
 			IConseiller ic = new Services();
-
+			Collection<Client> colcli = ic
+					.listerClient(Integer.parseInt(session.getAttribute("idConseiller").toString()));
+			request.setAttribute("listeclients", colcli);
 			request.getRequestDispatcher("/interfaceConseiller.jsp").forward(request, response);
 		}
 
